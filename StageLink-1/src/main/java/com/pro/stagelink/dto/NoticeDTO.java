@@ -1,34 +1,13 @@
 package com.pro.stagelink.dto;
 
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
+@Getter
+@Setter
 public class NoticeDTO {
-    private Long noticeNo;
+    private int noticeNo;
+    private String noticeTitle;
     private String noticeContents;
-    private LocalDateTime noticeDate;
-	public Object getNoticeContents() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public Object getNoticeContents1() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	public Object getNoticeDate() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	public Object getNoticeNo() {
-		return null;
-	}
+    private String noticeDate;
 }

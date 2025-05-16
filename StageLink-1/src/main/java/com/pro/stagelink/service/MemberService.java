@@ -1,47 +1,38 @@
 package com.pro.stagelink.service;
 
-import com.pro.stagelink.repository.MemberRepository;
-
-import jakarta.transaction.Transactional;
-
-import org.springframework.stereotype.Service;
-
 import com.pro.stagelink.domain.Member;
 import com.pro.stagelink.dto.MemberDTO;
+import com.pro.stagelink.dto.MemberStateUpdateDTO;
 import com.pro.stagelink.mapper.MemberMapper;
+import com.pro.stagelink.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
     private final MemberMapper memberMapper;
-
-    public MemberService(MemberRepository memberRepository, MemberMapper memberMapper) {
-        this.memberRepository = memberRepository;
-        this.memberMapper = memberMapper;
-    }
-
-    public Page<MemberDTO> getMemberList(String search, int page, int size) {
-        PageRequest pageable = PageRequest.of(page, size);
-        Page<Member> members = memberRepository.findByMbrNameContainingIgnoreCase(search, pageable);
-        return members.map(memberMapper::toDto);
-    }
     
-    public MemberDTO getMemberById(Long id) {
-        return memberRepository.findById(id)
-            .map(memberMapper::toDto)
-            .orElseThrow(() -> new RuntimeException("회원 없음"));
+    public Page<MemberDTO> getMembers(String name, int page, int size) {
+        return memberRepository.findByNameContaining(name, PageRequest.of(page, size))
+                .map(memberMapper::toDto);
     }
-    
-    @Transactional
-    public void updateMemberStatus(Long id, String stat) {
-        Member member = memberRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("회원이 존재하지 않습니다."));
-        member.setStat(stat); // 예: "ACTIVE", "BLOCKED"
+
+    public Optional<MemberDTO> getMemberDetail(int memberNo) {
+        return memberRepository.findById(memberNo).map(memberMapper::toDto);
     }
+
+    public void updateMemberState(int memberNo, MemberStateUpdateDTO dto) {
+        Member member = memberRepository.findById(memberNo)
+                .orElseThrow(() -> new IllegalArgumentException("회원을 찾을 수 없습니다."));
+        member.setMemberState(dto.getMemberState());
+        memberRepository.save(member);
+    }
+
 }

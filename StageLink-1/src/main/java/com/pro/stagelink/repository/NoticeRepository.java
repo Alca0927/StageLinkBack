@@ -1,10 +1,10 @@
 package com.pro.stagelink.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import com.pro.stagelink.domain.Notice;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-@Repository
-public interface NoticeRepository extends JpaRepository<Notice, Long> {
+public interface NoticeRepository extends JpaRepository<Notice, Integer> {
+    @Query("SELECT COUNT(n) FROM Notice n")
+    long countNotices();
 }

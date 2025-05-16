@@ -1,10 +1,21 @@
 package com.pro.stagelink.mapper;
 
-import com.pro.stagelink.dto.QnAnswerDTO;
 import com.pro.stagelink.domain.QnAnswer;
+import com.pro.stagelink.dto.QnAnswerDTO;
 
-@Mapper(componentModel = "spring")
-public interface QnAnswerMapper {
-    QnAnswerDTO toDto(QnAnswer entity);
-    QnAnswer toEntity(QnAnswerDTO dto);
+import org.springframework.stereotype.Component;
+
+@Component
+public class QnAnswerMapper {
+
+    public QnAnswerDTO toDto(QnAnswer qnAnswer) {
+    	QnAnswerDTO dto = new QnAnswerDTO();
+        dto.setQuestionNo(qnAnswer.getQuestionNo());
+        dto.setMemberNo(qnAnswer.getMemberNo());
+        dto.setQuestionContents(qnAnswer.getQuestionContents());
+        dto.setAnswerContents(qnAnswer.getAnswerContents());
+        dto.setCreateDate(qnAnswer.getCreateDate());
+        dto.setQnaRating(qnAnswer.getQnaRating());
+        return dto;
+    }
 }

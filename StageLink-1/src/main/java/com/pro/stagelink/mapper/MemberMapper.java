@@ -10,11 +10,13 @@ public class MemberMapper {
 
     public MemberDTO toDto(Member member) {
         MemberDTO dto = new MemberDTO();
-        dto.setMbrNo(member.getMbrNo());
-        dto.setMbrId(member.getMbrId());
-        dto.setMbrName(member.getMbrName());
-        dto.setEmail(member.getEmail());
-        dto.setStat(member.getStat());
+        dto.setMemberNo(member.getMemberNo());
+        dto.setMemberId(member.getMemberId());
+        dto.setName(member.getName());
+        dto.setUserEmail(member.getUserEmail());
+        dto.setMemberState(member.getMemberState());
+        dto.setNickname(member.getNickname());
+        dto.setAddress(member.getAddress());
         return dto;
     }
 }
