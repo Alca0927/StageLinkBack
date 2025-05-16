@@ -4,19 +4,22 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name="TBL_SHOWLOCATION")
-@Data
+@Getter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ShowLocation {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "SHOW_LOCATION")
-	private int showLocation;
+	@Column(name = "showlocation_id")
+	private int showlocation;
 
     @Column(name = "FACILITY_ID", unique = true)
     private String facilityId; // mt10id
@@ -27,16 +30,12 @@ public class ShowLocation {
 	@Column(name = "LOCATION_ADDRESS")
 	private String locationAddress;
 	
-	public void changeFacilityId(String facilityId) {
-	        this.facilityId = facilityId;
-	}
 	 
-	 
-	public void changeLocation_name(String locationName) {
+	public void changeLocationName(String locationName) {
 		 this.locationName = locationName;
 	 }
 	
-	public void changeLocation_address(String locationAddress) {
+	public void changeLocationAddress(String locationAddress) {
 		 this.locationAddress = locationAddress;
 	 }
 }

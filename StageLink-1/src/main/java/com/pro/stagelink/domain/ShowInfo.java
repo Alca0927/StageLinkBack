@@ -1,12 +1,19 @@
 package com.pro.stagelink.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name="TBL_SHOWINFO")
-@Data
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class ShowInfo {
 	@Id
@@ -34,7 +41,7 @@ public class ShowInfo {
 
     // 공연 장소 (외래 키)
     @ManyToOne
-    @JoinColumn(name = "SHOW_LOCATION")
+    @JoinColumn(name = "showlocation_id")
     private ShowLocation showLocation;
 
     @Column(name = "SHOW_STYURL1")
