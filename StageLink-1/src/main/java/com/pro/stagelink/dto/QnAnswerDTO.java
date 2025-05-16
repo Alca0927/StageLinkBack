@@ -1,18 +1,15 @@
 package com.pro.stagelink.dto;
 
-import lombok.*;
-
-import java.time.LocalDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class QnAnswerDTO {
-    private Long questionNo;
-    private Long memberNo;
+    private int questionNo;
+    private int memberNo;
     private String questionContents;
     private String answerContents;
-    private LocalDateTime createDate;
+    private String createDate;
+    private int qnaRating;
 }

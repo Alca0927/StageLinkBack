@@ -6,23 +6,15 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "qnanswer")
+@Table(name = "tbl_qnanswer")
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class QnAnswer {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long questionNo;
-
-    private Long memberNo;
-
-    private String questionContents;
-
-    private String answerContents;
-
-    private LocalDateTime createDate;
+    private int questionNo;       // Q&A번호
+    private int memberNo;     // 회원번호   
+    private String questionContents; // 질문
+    private String answerContents; // 답변
+    private String createDate; // 작성일
+    private int qnaRating;   // 평점
 }

@@ -1,8 +1,10 @@
 package com.pro.stagelink.repository;
 
+import com.pro.stagelink.domain.Report;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.pro.stagelink.domain.Report;
-
-public interface ReportRepository extends JpaRepository<Report, Long> {
+public interface ReportRepository extends JpaRepository<Report, Integer> {
+    Page<Report> findByReportReasonContainingIgnoreCase(String reportReason, Pageable pageable);
 }
