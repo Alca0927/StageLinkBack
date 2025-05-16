@@ -1,29 +1,32 @@
 package com.pro.stagelink.service;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.stereotype.Service;
-
 import com.pro.stagelink.domain.Report;
 import com.pro.stagelink.dto.ReportDTO;
 import com.pro.stagelink.mapper.ReportMapper;
 import com.pro.stagelink.repository.ReportRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
+import org.springframework.stereotype.Service;
 
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
 public class ReportService {
-    private final ReportRepository reportRepository;
-    private final ReportMapper reportMapper;
 
-    public Page<ReportDTO> getReportList(int page, int size) {
-        return reportRepository.findAll(PageRequest.of(page, size))
-                .map(reportMapper::toDto);
+    @Autowired
+    private ReportRepository reportRepository;
+
+    @Autowired
+    private ReportMapper reportMapper;
+
+    public Page<ReportDTO> getReportList(String keyword, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("reportNo").descending());
+        Page<Report> reportPage = reportRepository.findByReportReasonContainingIgnoreCase(keyword, pageable);
+        return reportPage.map(reportMapper::toDto);
     }
 
-    public Report getReportDetail(Long reportNo) {
+    public Optional<ReportDTO> getReportDetail(int reportNo) {
         return reportRepository.findById(reportNo)
-                .orElseThrow(() -> new RuntimeException("신고 내역 없음"));
+                .map(reportMapper::toDto);
     }
 }
