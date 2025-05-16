@@ -1,6 +1,5 @@
 package com.pro.stagelink.dto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ShowLocationDTO {
-	private int showlocation;
-	private String locationName;
-	private String locationAddress;
-	private String facilityId;
+public class ShowSeatDTO {
+    private int seatId;
+    private String seatClass;
+    private int seatNumber;
+    private int seatReserved = 0;
+    private ShowDTO showDTO;
 }

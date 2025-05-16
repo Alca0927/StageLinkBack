@@ -1,12 +1,22 @@
-package com.pro.stagelink.domain;
+       package com.pro.stagelink.domain;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "TBL_SHOW")
-@Data
+@Getter
+@ToString
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Show {
 	 @Id
 	 @GeneratedValue(strategy = GenerationType.IDENTITY)

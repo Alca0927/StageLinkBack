@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ShowLocationAPISaveDTO {
-	private String locationName;
+	private String showlocation;
     private String locationAddress;
     private String facilityId;
 }

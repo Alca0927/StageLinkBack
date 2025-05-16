@@ -28,27 +28,27 @@ public class ShowController {
 	private final ShowService showService;
 	
 	// 공연 목록
-	@GetMapping("/showmanager/showlist")
+	@GetMapping("/showmanager/show/list")
 	public PageResponseDTO<ShowDTO> showList(PageRequestDTO pageRequestDTO){
 		log.info("---------showlist-----------");
 		return showService.showList(pageRequestDTO);
 	}
 	
-	@PostMapping("/showmanager/showlist/add")
+	@PostMapping("/showmanager/show/add")
 	public Map<String, Integer> register(@RequestBody ShowDTO showDTO){
 		log.info("showDTO : " + showDTO);
-		int tno = showService.register(showDTO);
-		return Map.of("TNO:", tno);
+		int showNo = showService.register(showDTO);
+		return Map.of("showNo", showNo);
 	}
 	
-	@GetMapping("/showmanager/showlist/{tno}")
-	public ShowDTO getShow(@PathVariable(name="tno") int tno) {
-		return showService.getShow(tno);
+	@GetMapping("/showmanager/show/{showNo}")
+	public ShowDTO getShow(@PathVariable(name="showNo") int showNo) {
+		return showService.getShow(showNo);
 	}
 	
-	@PutMapping("/showmanager/showlist/{tno}")
-	public Map<String, String> modify(@PathVariable(name = "tno") int tno, @RequestBody ShowDTO showDTO){
-		showDTO.setShowNo(tno);
+	@PutMapping("/showmanager/show/{showNo}")
+	public Map<String, String> modify(@PathVariable(name = "showNo") int showNo, @RequestBody ShowDTO showDTO){
+		showDTO.setShowNo(showNo);
 		log.info("Modify : " + showDTO);
 		showService.modify(showDTO);
 		
@@ -56,7 +56,7 @@ public class ShowController {
 	}
 	
 	// 공연 상세 정보
-	@GetMapping("/showmanager/showinfo")
+	@GetMapping("/showmanager/showinfo/list")
 	public PageResponseDTO<ShowInfoDTO> showInfoList(PageRequestDTO pageRequestDTO){
 		log.info("---------showlist-----------");
 		return showService.showInfoList(pageRequestDTO);
@@ -69,14 +69,14 @@ public class ShowController {
 		return Map.of("TNO:", tno);
 	}
 		
-	@GetMapping("/showmanager/showinfo/{tno}")
-	public ShowInfoDTO getShowInfo(@PathVariable(name="tno") int tno) {
-		return showService.getShowInfo(tno);
+	@GetMapping("/showmanager/showinfo/{showInfo}")
+	public ShowInfoDTO getShowInfo(@PathVariable(name="showInfo") int showInfo) {
+		return showService.getShowInfo(showInfo);
 	}
 	
-	@PutMapping("/showmanager/showinfo/{tno}")
-	public Map<String, String> modify(@PathVariable(name = "tno") int tno, @RequestBody ShowInfoDTO showInfoDTO){
-		showInfoDTO.setShowInfo(tno);
+	@PutMapping("/showmanager/showinfo/{showInfo}")
+	public Map<String, String> modify(@PathVariable(name = "showInfo") int showInfo, @RequestBody ShowInfoDTO showInfoDTO){
+		showInfoDTO.setShowInfo(showInfo);
 		log.info("Modify : " + showInfoDTO);
 		showService.modify(showInfoDTO);
 		
@@ -84,7 +84,7 @@ public class ShowController {
 	}
 	
 	// 공연장
-	@GetMapping("/showmanager/location")
+	@GetMapping("/showmanager/location/list")
 	public PageResponseDTO<ShowLocationDTO> showLocationList(PageRequestDTO pageRequestDTO){
 		log.info("---------showlist-----------");
 		return showService.showLocationList(pageRequestDTO);
@@ -93,18 +93,18 @@ public class ShowController {
 	@PostMapping("/showmanager/location/add")
 	public Map<String, Integer> register(@RequestBody ShowLocationDTO showLocationDTO){
 		log.info("showInfoDTO : " + showLocationDTO);
-		int tno = showService.register(showLocationDTO);
-		return Map.of("TNO:", tno);
+		int showlocation_id = showService.register(showLocationDTO);
+		return Map.of("showlocation_id:", showlocation_id);
 	}
 		
-	@GetMapping("/showmanager/location/{tno}")
-	public ShowLocationDTO getShowLocation(@PathVariable(name="tno") int tno) {
-		return showService.getShowLocation(tno);
+	@GetMapping("/showmanager/location/{showlocation}")
+	public ShowLocationDTO getShowlocation(@PathVariable(name="showlocation") int showlocation) {
+		return showService.getShowlocation(showlocation);
 	}
 	
-	@PutMapping("/showmanager/location/{tno}")
-	public Map<String, String> modify(@PathVariable(name = "tno") int tno, @RequestBody ShowLocationDTO showLocationDTO){
-		showLocationDTO.setShow_location(tno);
+	@PutMapping("/showmanager/location/{showlocation}")
+	public Map<String, String> modify(@PathVariable(name = "showlocation") int showlocation, @RequestBody ShowLocationDTO showLocationDTO){
+		showLocationDTO.setShowlocation(showlocation);
 		log.info("Modify : " + showLocationDTO);
 		showService.modify(showLocationDTO);
 		

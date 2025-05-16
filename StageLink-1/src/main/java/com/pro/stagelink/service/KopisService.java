@@ -29,7 +29,7 @@ public class KopisService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    private final String serviceKey = "servicekey"; // 본인 키 입력
+    private final String serviceKey = "e59eb780dd8445ba9778ac0055ff1db2"; // 본인 키 입력
 
     public void fetchAndSaveData() {
         List<String> facilityIds = fetchFacilityIds();
@@ -48,7 +48,10 @@ public class KopisService {
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             Document doc = Jsoup.parse(response.getBody(), "", Parser.xmlParser());
             for (Element e : doc.select("db")) {
-                ids.add(e.selectFirst("mt10id").text());
+            	Element mt10idElement = e.selectFirst("mt10id");
+                if (mt10idElement != null) {
+                    ids.add(mt10idElement.text());
+                }
             }
         }
         return ids;
@@ -81,11 +84,14 @@ public class KopisService {
     private List<String> fetchShowIds() {
         List<String> ids = new ArrayList<>();
         for (int page = 1; page <= 5; page++) {
-            String url = String.format("http://www.kopis.or.kr/openApi/restful/pblprfr?service=%s&stdate=20250101&eddate=20250130&cpage=%d&rows=10", serviceKey, page);
+            String url = String.format("http://www.kopis.or.kr/openApi/restful/pblprfr?service=%s&stdate=20240601&eddate=20250101&cpage=%d&rows=10", serviceKey, page);
             ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
             Document doc = Jsoup.parse(response.getBody(), "", Parser.xmlParser());
             for (Element e : doc.select("db")) {
-                ids.add(e.selectFirst("mt20id").text());
+            	Element mt20idElement = e.selectFirst("mt20id");
+                if (mt20idElement != null) {
+                    ids.add(mt20idElement.text());
+                }
             }
         }
         return ids;

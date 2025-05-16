@@ -13,9 +13,9 @@ public interface ShowService {
 	int register(ShowLocationDTO showLocationDTO);
 	
 	// 조회
-	ShowDTO getShow(int tno);
-	ShowInfoDTO getShowInfo(int tno);
-	ShowLocationDTO getShowLocation(int tno);
+	ShowDTO getShow(int showNo);
+	ShowInfoDTO getShowInfo(int showInfo);
+	ShowLocationDTO getShowlocation(int showlocation);
 	
 	// 수정
 	void modify(ShowDTO showDTO);

@@ -9,7 +9,7 @@ import com.pro.stagelink.dto.api.ShowLocationAPISaveDTO;
 public class DTOConverter {
 	public static ShowLocation toEntity(ShowLocationAPISaveDTO dto) {
         return ShowLocation.builder()
-        		.locationName(dto.getLocationName())
+        		.locationName(dto.getLocationAddress())
                 .locationAddress(dto.getLocationAddress())
                 .build();
     }

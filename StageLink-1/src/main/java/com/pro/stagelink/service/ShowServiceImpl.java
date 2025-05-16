@@ -1,5 +1,6 @@
 package com.pro.stagelink.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.pro.stagelink.domain.Show;
 import com.pro.stagelink.domain.ShowInfo;
 import com.pro.stagelink.domain.ShowLocation;
+import com.pro.stagelink.domain.ShowSeat;
 import com.pro.stagelink.dto.PageRequestDTO;
 import com.pro.stagelink.dto.PageResponseDTO;
 import com.pro.stagelink.dto.ShowDTO;
@@ -22,6 +24,7 @@ import com.pro.stagelink.dto.ShowLocationDTO;
 import com.pro.stagelink.repository.ShowInfoRepository;
 import com.pro.stagelink.repository.ShowLocationRepository;
 import com.pro.stagelink.repository.ShowRepository;
+import com.pro.stagelink.repository.ShowSeatRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +39,7 @@ public class ShowServiceImpl implements ShowService {
 	private final ShowRepository showRepository;
 	private final ShowInfoRepository showInfoRepository;
 	private final ShowLocationRepository showLocationRepository;
+	private final ShowSeatRepository showSeatRepository;
 	
 	// 등록----------------------------------
 	@Override
@@ -44,6 +48,12 @@ public class ShowServiceImpl implements ShowService {
 		
 		Show show = modelMapper.map(showDTO, Show.class);
 		Show savedShow = showRepository.save(show);
+		
+		// 좌석 자동 생성
+		 createSeats(savedShow, "R", showDTO.getSeatRCount());
+	     createSeats(savedShow, "S", showDTO.getSeatSCount());
+	     createSeats(savedShow, "A", showDTO.getSeatACount());
+	     createSeats(savedShow, "VIP", showDTO.getSeatVipCount());
 		return savedShow.getShowNo();
 	}
 
@@ -62,13 +72,30 @@ public class ShowServiceImpl implements ShowService {
 		
 		ShowLocation showLocation = modelMapper.map(showLocationDTO, ShowLocation.class);
 		ShowLocation savedShowLocation = showLocationRepository.save(showLocation);
-		return savedShowLocation.getShowLocation();
+		return savedShowLocation.getShowlocation();
 	}
+	
+	// 좌석 등록
+	private void createSeats(Show show, String seatClass, int count) {
+        List<ShowSeat> seats = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            ShowSeat seat = new ShowSeat();
+            seat.setSeatClass(seatClass);
+            seat.setSeatNumber(i);
+            seat.setSeatReserved(0);
+            seat.setShow(show);
+            seats.add(seat);
+        }
+        showSeatRepository.saveAll(seats);
+    }
+	
+	
+
 
 	// 조회-----------------------------
 	@Override
-	public ShowDTO getShow(int tno) {
-		java.util.Optional<Show> result = showRepository.findById(tno);
+	public ShowDTO getShow(int showNo) {
+		java.util.Optional<Show> result = showRepository.findById(showNo);
 		
 		Show show = result.orElseThrow();
 		ShowDTO dto = modelMapper.map(show, ShowDTO.class);
@@ -77,18 +104,26 @@ public class ShowServiceImpl implements ShowService {
 	}
 
 	@Override
-	public ShowInfoDTO getShowInfo(int tno) {
-		java.util.Optional<ShowInfo> result = showInfoRepository.findById(tno);
+	public ShowInfoDTO getShowInfo(int showInfo) {
+		java.util.Optional<ShowInfo> result = showInfoRepository.findById(showInfo);
 		
-		ShowInfo showInfo = result.orElseThrow();
-		ShowInfoDTO dto = modelMapper.map(showInfo, ShowInfoDTO.class);
+		ShowInfo showinfo = result.orElseThrow();		
+		ShowInfoDTO dto = modelMapper.map(showinfo, ShowInfoDTO.class);
 		
-		return dto;
+		// 2. ShowLocation → ShowLocationDTO
+	    if (showinfo.getShowLocation() != null) {
+	        ShowLocationDTO showLocationDTO = modelMapper.map(showinfo.getShowLocation(), ShowLocationDTO.class);
+	        dto.setShowLocationDTO(showLocationDTO);  // 이 위치가 맞음!
+	    }
+	    System.out.println(dto.getShowLocationDTO());
+	    System.out.println(dto.getShowLocationDTO().getLocationName());
+		
+	    return dto;
 	}
 
 	@Override
-	public ShowLocationDTO getShowLocation(int tno) {
-		java.util.Optional<ShowLocation> result = showLocationRepository.findById(tno);
+	public ShowLocationDTO getShowlocation(int showlocation) {
+		java.util.Optional<ShowLocation> result = showLocationRepository.findById(showlocation);
 		
 		ShowLocation showLocation = result.orElseThrow();
 		ShowLocationDTO dto = modelMapper.map(showLocation, ShowLocationDTO.class);
@@ -114,9 +149,9 @@ public class ShowServiceImpl implements ShowService {
 		show.changeSeatSPrice(showDTO.getSeatSPrice());
 		show.changeSeatVipPrice(showDTO.getSeatVipPrice());
 		show.changeSeatRCount(showDTO.getSeatRCount());
-		show.changeSeatACount(showDTO.getSeatRCount());
-		show.changeSeatSCount(showDTO.getSeatRCount());
-		show.changeSeatVipCount(showDTO.getSeatRCount());
+		show.changeSeatACount(showDTO.getSeatACount());
+		show.changeSeatSCount(showDTO.getSeatSCount());
+		show.changeSeatVipCount(showDTO.getSeatVipCount());
 		show.changeShowState(showDTO.getShowState());
 		
 		showRepository.save(show);
@@ -149,12 +184,12 @@ public class ShowServiceImpl implements ShowService {
 
 	@Override
 	public void modify(ShowLocationDTO showLocationDTO) {
-		Optional<ShowLocation> result = showLocationRepository.findById(showLocationDTO.getShow_location());
+		Optional<ShowLocation> result = showLocationRepository.findById(showLocationDTO.getShowlocation());
 		
 		ShowLocation showLocation = result.orElseThrow();
 		
-		showLocation.changeLocation_name(showLocation.getLocationName());
-		showLocation.changeLocation_address(showLocationDTO.getLocation_address());
+		showLocation.changeLocationName(showLocation.getLocationName());
+		showLocation.changeLocationAddress(showLocationDTO.getLocationAddress());
 		
 		showLocationRepository.save(showLocation);
 	}
@@ -184,7 +219,7 @@ public class ShowServiceImpl implements ShowService {
 	@Override
 	public PageResponseDTO<ShowDTO> showList(PageRequestDTO pageRequestDTO) {
 		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("tno").descending());
+				pageRequestDTO.getSize(), Sort.by("showNo").descending());
 
 		Page<Show> result = showRepository.findAll(pageable);
 
@@ -202,7 +237,7 @@ public class ShowServiceImpl implements ShowService {
 	@Override
 	public PageResponseDTO<ShowInfoDTO> showInfoList(PageRequestDTO pageRequestDTO) {
 		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("tno").descending());
+				pageRequestDTO.getSize(), Sort.by("showInfo").descending());
 
 		Page<ShowInfo> result = showInfoRepository.findAll(pageable);
 
@@ -220,7 +255,7 @@ public class ShowServiceImpl implements ShowService {
 	@Override
 	public PageResponseDTO<ShowLocationDTO> showLocationList(PageRequestDTO pageRequestDTO) {
 		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("tno").descending());
+				pageRequestDTO.getSize(), Sort.by("showlocation").descending());
 
 		Page<ShowLocation> result = showLocationRepository.findAll(pageable);
 
@@ -234,5 +269,7 @@ public class ShowServiceImpl implements ShowService {
 
 		return responseDTO;
 	}
+	
+	
 
 }
