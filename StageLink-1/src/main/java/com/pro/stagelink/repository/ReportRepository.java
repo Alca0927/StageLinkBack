@@ -8,4 +8,3 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ReportRepository extends JpaRepository<Report, Integer> {
     Page<Report> findByReportReasonContainingIgnoreCase(String reportReason, Pageable pageable);
 }
-
