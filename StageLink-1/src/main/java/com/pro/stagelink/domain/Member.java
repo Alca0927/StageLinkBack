@@ -33,3 +33,4 @@ public class Member {
 	private String memberState;      // 상태
 
 }
+
