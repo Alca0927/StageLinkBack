@@ -11,10 +11,13 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PageRequestDTO {
-	
-	@Builder.Default
-	private int page = 1;
-	
-	@Builder.Default
-	private int size = 10;
+
+    @Builder.Default
+    private int page = 1;
+
+    @Builder.Default
+    private int size = 10;
+
+    // ✅ 이름 검색용 필드 추가
+    private String name;
 }

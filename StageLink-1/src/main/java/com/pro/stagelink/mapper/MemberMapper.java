@@ -1,9 +1,9 @@
 package com.pro.stagelink.mapper;
 
+import org.springframework.stereotype.Component;
+
 import com.pro.stagelink.domain.Member;
 import com.pro.stagelink.dto.MemberDTO;
-
-import org.springframework.stereotype.Component;
 
 @Component
 public class MemberMapper {
