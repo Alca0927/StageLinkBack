@@ -19,4 +19,3 @@ public class QnAnswer {
     private String createDate; // 작성일
     private int qnaRating;   // 평점
 }
-

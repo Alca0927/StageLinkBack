@@ -8,4 +8,3 @@ public interface QnAnswerRepository extends JpaRepository<QnAnswer, Integer> {
     @Query("SELECT COUNT(q) FROM QnAnswer q")
     long countQnAnswers();
 }
-

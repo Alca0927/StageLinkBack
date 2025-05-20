@@ -11,4 +11,3 @@ public class ReportDTO {
     private String reportDate;   // 신고일자
     private String reportReason;     // 신고사유
 }
-

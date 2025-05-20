@@ -17,4 +17,3 @@ public class Notice {
     private String notice_date;   // 작성일
     private String noticeTitle; // 공지제목
 }
-
