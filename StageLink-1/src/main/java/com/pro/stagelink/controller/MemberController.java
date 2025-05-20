@@ -1,33 +1,36 @@
 package com.pro.stagelink.controller;
 
 import com.pro.stagelink.dto.MemberDTO;
-import com.pro.stagelink.dto.MemberStateUpdateDTO;
+import com.pro.stagelink.dto.PageRequestDTO;
+import com.pro.stagelink.dto.PageResponseDTO;
 import com.pro.stagelink.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
+
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/members")
 @RequiredArgsConstructor
 public class MemberController {
+
     private final MemberService memberService;
 
     @GetMapping
-    public Page<MemberDTO> getMembers(@RequestParam(defaultValue = "") String name,
-                                      @RequestParam(defaultValue = "0") int page,
-                                      @RequestParam(defaultValue = "10") int size) {
-        return memberService.getMembers(name, page, size);
+    public PageResponseDTO<MemberDTO> getMembers(PageRequestDTO pageRequestDTO) {
+        return memberService.getMembers(pageRequestDTO);
     }
 
     @GetMapping("/{memberNo}")
-    public MemberDTO getMemberDetail(@PathVariable int memberNo) {
-        return memberService.getMemberDetail(memberNo)
-                .orElseThrow(() -> new IllegalArgumentException("회원 정보를 찾을 수 없습니다."));
+    public MemberDTO getMemberDetail(@PathVariable(name = "memberNo") int memberNo) {
+        return memberService.getMember(memberNo);
     }
 
     @PutMapping("/{memberNo}/state")
-    public void updateMemberState(@PathVariable int memberNo, @RequestBody MemberStateUpdateDTO dto) {
-        memberService.updateMemberState(memberNo, dto);
+    public Map<String, String> updateMemberState(@PathVariable(name = "memberNo") int memberNo, @RequestBody MemberDTO dto) {
+        dto.setMemberNo(memberNo);
+        memberService.updateMemberState(dto);
+        return Map.of("RESULT", "SUCCESS");
     }
 }

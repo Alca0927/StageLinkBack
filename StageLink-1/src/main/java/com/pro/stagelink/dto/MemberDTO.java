@@ -1,8 +1,16 @@
 package com.pro.stagelink.dto;
 
+import java.time.LocalDateTime;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class MemberDTO {
 	private int memberNo;       // 회원 번호 (기본키)
     private String memberId;     // 회원 ID
