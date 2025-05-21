@@ -1,5 +1,6 @@
 package com.pro.stagelink.domain;
 
+
 import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
@@ -21,16 +22,17 @@ import lombok.Setter;
 @Builder
 public class Member {
 	@Id
-	@Column(name="member")
+	@Column(name = "member")
 	private int memberNo;       // 회원 번호 (기본키)
 	
-	@Column(name="member_id")
+	@Column(name="ID")
 	private String memberId;     // 회원 ID
 	
-	@Column(name="password")
+	@Column(name = "password")
 	private String password;   // password
 	
-	@Column(name="name")
+	@Column(name = "name")
+
 	private String name;   // 이름
 	
 	@Column(name="birthday")
@@ -55,4 +57,3 @@ public class Member {
 	private String memberState;      // 상태
 
 }
-

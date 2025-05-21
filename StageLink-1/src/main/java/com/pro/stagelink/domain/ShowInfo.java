@@ -41,7 +41,7 @@ public class ShowInfo {
 
     // 공연 장소 (외래 키)
     @ManyToOne
-    @JoinColumn(name = "showlocation_id")
+    @JoinColumn(name = "show_location")
     private ShowLocation showLocation;
 
     @Column(name = "SHOW_STYURL1")

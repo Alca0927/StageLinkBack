@@ -2,6 +2,8 @@ package com.pro.stagelink.domain;
 
 import java.time.LocalDateTime;
 
+import com.pro.stagelink.dto.MemberDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

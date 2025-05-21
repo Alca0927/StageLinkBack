@@ -44,6 +44,22 @@ dependencies {
 
 	// API 끌고 오기 위한 의존성
 	implementation 'org.jsoup:jsoup:1.16.1'
+	
+	// json 데이터 생성
+	// https://mvnrepository.com/artifact/com.google.code.gson/gson
+	implementation("com.google.code.gson:gson:2.10.1")
+	
+	// 검증을 위한 의존성
+	// https://mvnrepository.com/artifact/jakarta.validation/jakarta.validation-api
+	implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+	
+	// JWT 문자열 생성
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-api
+	implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-impl
+	runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+	// https://mvnrepository.com/artifact/io.jsonwebtoken/jjwt-jackson
+	runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
 }
 
 tasks.named('test') {
