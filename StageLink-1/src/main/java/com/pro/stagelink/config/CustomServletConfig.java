@@ -7,6 +7,15 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CustomServletConfig implements WebMvcConfigurer{
+	
+	
+	@Override
+	public void addFormatters(FormatterRegistry registry) {
+	}
+	
+	
+	/*
+	// 리액트와 스프링부트 연결
 	@Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
@@ -14,4 +23,5 @@ public class CustomServletConfig implements WebMvcConfigurer{
                 .allowedMethods("GET", "POST", "PUT", "DELETE")
                 .allowCredentials(true);
     }
+    */
 }
