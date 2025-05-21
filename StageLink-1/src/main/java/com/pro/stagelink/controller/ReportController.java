@@ -34,8 +34,9 @@ public class ReportController {
 
     // 신고 상세 조회
     @GetMapping("/{reportNo}")
-    public ReportDTO getDetail(@PathVariable int reportNo) {
+    public ReportDTO getDetail(@PathVariable("reportNo") int reportNo) {
         return reportService.getDetail(reportNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 신고 번호를 찾을 수 없습니다."));
     }
+
 }
