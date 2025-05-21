@@ -54,4 +54,13 @@ public class NoticeService {
     public long getCount() {
         return noticeRepository.count();
     }
+    
+ // 공지사항 상세 조회
+    public NoticeDTO getNotice(Integer noticeNo) {
+        Notice notice = noticeRepository.findById(noticeNo)
+                .orElseThrow(() -> new IllegalArgumentException("해당 공지사항이 존재하지 않습니다."));
+        return modelMapper.map(notice, NoticeDTO.class);
+    }
+
+
 }

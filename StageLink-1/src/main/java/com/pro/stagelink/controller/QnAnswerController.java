@@ -31,14 +31,14 @@ public class QnAnswerController {
 
     // Q&A 답변 수정
     @PutMapping("/{questionNo}/answer")
-    public Map<String, String> updateAnswer(@PathVariable int questionNo, @RequestBody QnAnswerDTO dto) {
+    public Map<String, String> updateAnswer(@PathVariable("questionNo") int questionNo, @RequestBody QnAnswerDTO dto) {
         qnAnswerService.updateAnswer(questionNo, dto);
         return Map.of("RESULT", "SUCCESS");
     }
 
     // 단건 상세 조회 (선택)
     @GetMapping("/{questionNo}")
-    public QnAnswerDTO getDetail(@PathVariable int questionNo) {
+    public QnAnswerDTO getDetail(@PathVariable("questionNo") int questionNo) {
         return qnAnswerService.getDetail(questionNo)
                 .orElseThrow(() -> new IllegalArgumentException("Q&A 항목을 찾을 수 없습니다."));
     }
