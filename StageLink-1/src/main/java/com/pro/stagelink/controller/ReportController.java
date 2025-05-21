@@ -2,30 +2,41 @@ package com.pro.stagelink.controller;
 
 import com.pro.stagelink.dto.ReportDTO;
 import com.pro.stagelink.service.ReportService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/reports")
 public class ReportController {
 
-    @Autowired
-    private ReportService reportService;
+    private final ReportService reportService;
 
+    public ReportController(ReportService reportService) {
+        this.reportService = reportService;
+    }
+
+    // 신고 목록 조회 (검색 및 페이징)
     @GetMapping
     public Page<ReportDTO> getReports(
-            @RequestParam(defaultValue = "") String keyword,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(name = "reason", required = false) String reason,
+            @RequestParam(name = "page", defaultValue = "1") int page
     ) {
-        return reportService.getReportList(keyword, page, size);
+        return reportService.getReports(reason, page);
     }
 
-    @GetMapping("/{reportNo}")
-    public Optional<ReportDTO> getReportDetail(@PathVariable int reportNo) {
-        return reportService.getReportDetail(reportNo);
+    // 신고 건수
+    @GetMapping("/count")
+    public Map<String, Long> getCount() {
+        return Map.of("count", reportService.getCount());
     }
+
+    // 신고 상세 조회
+    @GetMapping("/{reportNo}")
+    public ReportDTO getDetail(@PathVariable("reportNo") int reportNo) {
+        return reportService.getDetail(reportNo)
+                .orElseThrow(() -> new IllegalArgumentException("해당 신고 번호를 찾을 수 없습니다."));
+    }
+
 }

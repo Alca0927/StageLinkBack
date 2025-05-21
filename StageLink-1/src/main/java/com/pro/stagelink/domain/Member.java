@@ -32,6 +32,7 @@ public class Member {
 	private String password;   // password
 	
 	@Column(name = "name")
+
 	private String name;   // 이름
 	
 	@Column(name="birthday")
@@ -43,7 +44,7 @@ public class Member {
 	@Column(name="address")
 	private String address;   // 주소
 	
-	@Column(name="Gender")
+	@Column(name="gender")
 	private String gender;   // 성별
 	
 	@Column(name="nickname")

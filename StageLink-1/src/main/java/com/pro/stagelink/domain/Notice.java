@@ -1,5 +1,6 @@
 package com.pro.stagelink.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -11,9 +12,17 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Notice {
+
     @Id
-    private int notice_no;       // 공지번호
-    private String notice_contents;     // 공지내용
-    private String notice_date;   // 작성일
-    private String noticeTitle; // 공지제목
+    @Column(name = "notice_no")
+    private int noticeNo;  // 공지번호
+
+    @Column(name = "notice_content")
+    private String noticeContent;  // 공지내용
+
+    @Column(name = "notice_date")
+    private String noticeDate;  // 작성일
+
+    @Column(name = "notice_title")
+    private String noticeTitle;  // 공지제목
 }
