@@ -13,7 +13,7 @@ public class ReportMapper {
         dto.setReportNo(report.getReportNo());
         dto.setPostNo(report.getPostNo());
         dto.setSuspectId(report.getSuspectId());
-        dto.setReporterId(report.getReporterId());
+        dto.setReportedId(report.getReportedId());
         dto.setReportDate(report.getReportDate());
         dto.setReportReason(report.getReportReason());
         return dto;

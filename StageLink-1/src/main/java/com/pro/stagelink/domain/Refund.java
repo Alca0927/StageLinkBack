@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+import com.pro.stagelink.entity.Member;
+
 import jakarta.persistence.*;
 
 @Entity
