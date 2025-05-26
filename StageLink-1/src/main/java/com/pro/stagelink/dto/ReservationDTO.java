@@ -2,7 +2,7 @@ package com.pro.stagelink.dto;
 
 import java.time.LocalDateTime;
 
-import com.pro.stagelink.domain.Member;
+import com.pro.stagelink.entity.Member;
 import com.pro.stagelink.domain.ReservationStatus;
 import com.pro.stagelink.domain.Show;
 import com.pro.stagelink.domain.ShowSeat;

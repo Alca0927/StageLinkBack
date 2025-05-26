@@ -23,14 +23,21 @@ public class MemberController {
     }
 
     @GetMapping("/{memberNo}")
-    public MemberDTO getMemberDetail(@PathVariable(name = "memberNo") int memberNo) {
+    public MemberDTO getMemberDetail(@PathVariable(name = "memberNo") Long memberNo) {
         return memberService.getMember(memberNo);
     }
 
     @PutMapping("/{memberNo}/state")
-    public Map<String, String> updateMemberState(@PathVariable(name = "memberNo") int memberNo, @RequestBody MemberDTO dto) {
+    public Map<String, String> updateMemberState(@PathVariable(name = "memberNo") Long memberNo, @RequestBody MemberDTO dto) {
         dto.setMemberNo(memberNo);
         memberService.updateMemberState(dto);
         return Map.of("RESULT", "SUCCESS");
     }
+    
+    @GetMapping("/count")
+    public Map<String, Long> getMemberCount() {
+        long count = memberService.getTotalCount();
+        return Map.of("count", count);
+    }
+
 }

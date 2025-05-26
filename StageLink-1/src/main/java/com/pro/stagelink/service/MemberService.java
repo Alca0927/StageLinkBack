@@ -1,6 +1,6 @@
 package com.pro.stagelink.service;
 
-import com.pro.stagelink.domain.Member;
+import com.pro.stagelink.entity.Member;
 import com.pro.stagelink.dto.MemberDTO;
 import com.pro.stagelink.dto.PageRequestDTO;
 import com.pro.stagelink.dto.PageResponseDTO;
@@ -29,7 +29,7 @@ public class MemberService {
     private final ModelMapper modelMapper;
 
     // 단일 회원 조회
-    public MemberDTO getMember(int memberNo){
+    public MemberDTO getMember(Long memberNo){
         Optional<Member> result = memberRepository.findById(memberNo);
         Member member = result.orElseThrow();
         return modelMapper.map(member, MemberDTO.class);
@@ -70,4 +70,9 @@ public class MemberService {
                 .totalCount(result.getTotalElements())
                 .build();
     }
+    
+    public long getTotalCount() {
+        return memberRepository.count();
+    }
+
 }
