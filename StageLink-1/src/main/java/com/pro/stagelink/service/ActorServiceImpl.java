@@ -71,25 +71,19 @@ public class ActorServiceImpl implements ActorService {
 
 	@Override
 	public ActorShowDTO getActorShow(int actorNo, int showInfoId) {
-		/*
-		Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actorNo, showInfoId);
-		ActorShow actorShow = result.orElseThrow();
-		ActorShowDTO dto = modelMapper.map(actorShow, ActorShowDTO.class);
-		return dto;
-		*/
-		Actor actor = actorRepository.findById(actorNo)
-		        .orElseThrow(() -> new RuntimeException("배우가 존재하지 않습니다: " + actorNo));
-		    
-		    ShowInfo showInfo = showInfoRepository.findById(showInfoId)
-		        .orElseThrow(() -> new RuntimeException("공연 정보가 존재하지 않습니다: " + showInfoId));
-		    
-		    // ActorShow 조회
-		    Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actor, showInfo);
-		    ActorShow actorShow = result.orElseThrow(() -> 
-		        new RuntimeException("배우-공연 매칭 정보가 존재하지 않습니다."));
+	    Actor actor = actorRepository.findById(actorNo)
+	        .orElseThrow(() -> new RuntimeException("배우가 존재하지 않습니다: " + actorNo));
+	    
+	    ShowInfo showInfo = showInfoRepository.findById(showInfoId)
+	        .orElseThrow(() -> new RuntimeException("공연 정보가 존재하지 않습니다: " + showInfoId));
+	    
+	    // ActorShow 조회
+	    Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actor, showInfo);
+	    ActorShow actorShow = result.orElseThrow(() -> 
+	        new RuntimeException("배우-공연 매칭 정보가 존재하지 않습니다."));
 
-		    // DTO로 변환해서 반환
-		    return modelMapper.map(actorShow, ActorShowDTO.class);
+	    // DTO로 변환해서 반환
+	    return modelMapper.map(actorShow, ActorShowDTO.class);
 	}
 
 	
@@ -109,36 +103,33 @@ public class ActorServiceImpl implements ActorService {
 
 	@Override
 	public void modify(ActorShowDTO actorShowDTO) {
-		/*
-		Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actorShowDTO.getActorDTO(), actorShowDTO.getShowInfoDTO());
-		ActorShow actorShow = result.orElseThrow();
-		
-		actorShow.changeRoleName(actorShowDTO.getRoleName());
-		
-		ShowInfo showInfo = modelMapper.map(actorShowDTO.getShowInfoDTO(), ShowInfo.class);
-		actorShow.changeShowInfo(showInfo);
-		actorShow.changeShowStartTime(actorShowDTO.getShowStartTime());
-		actorShow.changeShowEndTime(actorShowDTO.getShowEndTime());
-		
-		actorShowRepository.save(actorShow);
-		 */
-		// DTO → Entity 변환
-	    Actor actor = modelMapper.map(actorShowDTO.getActorDTO(), Actor.class);
-	    ShowInfo showInfo = modelMapper.map(actorShowDTO.getShowInfoDTO(), ShowInfo.class);
+	    // 1. 먼저 기존 배우와 공연 정보가 실제로 존재하는지 확인
+	    Actor actor = actorRepository.findById(actorShowDTO.getActorDTO().getActorNo())
+	        .orElseThrow(() -> new RuntimeException("배우가 존재하지 않습니다: " + actorShowDTO.getActorDTO().getActorNo()));
 	    
-	    // 기존 ActorShow 조회
+	    ShowInfo showInfo = showInfoRepository.findById(actorShowDTO.getShowInfoDTO().getShowInfo())
+	        .orElseThrow(() -> new RuntimeException("공연 정보가 존재하지 않습니다: " + actorShowDTO.getShowInfoDTO().getShowInfo()));
+	    
+	    // 2. 기존 ActorShow 조회
 	    Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actor, showInfo);
 	    ActorShow actorShow = result.orElseThrow(() -> 
 	        new RuntimeException("배우-공연 매칭 정보를 찾을 수 없습니다.")
 	    );
 	    
-	    // 값 변경
-	    actorShow.changeRoleName(actorShowDTO.getRoleName());
-	    actorShow.changeShowInfo(showInfo); // showInfo 자체도 변경
-	    actorShow.changeShowStartTime(actorShowDTO.getShowStartTime());
-	    actorShow.changeShowEndTime(actorShowDTO.getShowEndTime());
+	    // 3. 변경 가능한 필드들만 수정 (복합키는 변경하지 않음)
+	    if (actorShowDTO.getRoleName() != null) {
+	        actorShow.changeRoleName(actorShowDTO.getRoleName());
+	    }
+	    
+	    if (actorShowDTO.getShowStartTime() != null) {
+	        actorShow.changeShowStartTime(actorShowDTO.getShowStartTime());
+	    }
+	    
+	    if (actorShowDTO.getShowEndTime() != null) {
+	        actorShow.changeShowEndTime(actorShowDTO.getShowEndTime());
+	    }
 
-	    // 저장
+	    // 4. 저장
 	    actorShowRepository.save(actorShow);
 	}
 

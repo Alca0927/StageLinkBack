@@ -119,7 +119,7 @@ public class CustomSecurityConfig {
 		// 🔒 경로별 권한 설정 추가
 	    http.authorizeHttpRequests(auth -> auth
 	        .requestMatchers("/", "/s/login", "/s/logout").permitAll()
-	        .requestMatchers("/admin/**").hasRole("ADMIN")  // 인증된 ADMIN만 허용
+	        .requestMatchers("/admin/**","/api/**").hasRole("ADMIN")  // 인증된 ADMIN만 허용
 	        .anyRequest().authenticated()
 	    );
 		
