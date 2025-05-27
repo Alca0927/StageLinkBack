@@ -17,6 +17,8 @@ public class MemberMapper {
         dto.setUserEmail(member.getUserEmail());
         dto.setMemberState(member.getMemberState());
         dto.setNickname(member.getNickname());
+        dto.setJoinedDate(member.getJoinedDate());
+        dto.setSignupType(member.getSignupType());
         return dto;
     }
 }
