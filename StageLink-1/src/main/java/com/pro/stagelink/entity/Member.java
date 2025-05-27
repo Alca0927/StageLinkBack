@@ -1,5 +1,7 @@
 package com.pro.stagelink.entity;
 import java.time.LocalDate;
+import java.util.Date;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -43,4 +45,11 @@ public class Member {
   @Enumerated(EnumType.STRING)
   @Column(name = "MEMBER_STATE", nullable = false)
   private MemberState memberState;
+  
+  @Column(name="JOINED_DATE")
+  private Date joinedDate;
+  
+  @Enumerated(EnumType.STRING)
+  @Column(name = "SIGNUP_TYPE")
+  private SignupType signpType;
 }

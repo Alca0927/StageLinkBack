@@ -14,7 +14,7 @@ import io.jsonwebtoken.security.Keys;
 public class JWTUtil {
     private static final String key = "12345678901234567890123456789012";
 
-    public static final int ACCESS_TOKEN_EXP_MIN = 3;
+    public static final int ACCESS_TOKEN_EXP_MIN = 60;
     public static final int REFRESH_TOKEN_EXP_MIN = 10080;
 
     // 공통 토큰 생성 (tokenType: "access", "refresh")
