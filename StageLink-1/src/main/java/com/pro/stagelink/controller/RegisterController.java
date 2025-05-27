@@ -29,7 +29,7 @@ public class RegisterController {
 		return registerService.reservationList(pageRequestDTO);
 	}
 	
-	@GetMapping("/showmanager/reservation/{reservationNo}")
+	@GetMapping("/registermanager/reservation/{reservationNo}")
 	public ReservationDTO getShow(@PathVariable(name="reservationNo") int reservationNo) {
 		return registerService.getReservation(reservationNo);
 	}
@@ -42,7 +42,7 @@ public class RegisterController {
 		return registerService.refundList(pageRequestDTO);
 	}
 	
-	@GetMapping("/showmanager/refund/{refundNo}")
+	@GetMapping("/registermanager/refund/{refundNo}")
 	public RefundDTO getRefund(@PathVariable(name="refundNo") int refundNo) {
 		return registerService.getRefund(refundNo);
 	}
