@@ -16,8 +16,10 @@ public class JWTUtil {
     // ✅ 실제 환경에서는 이 key를 외부 설정으로 관리해야 합니다.
     private static final String key = "12345678901234567890123456789012";
 
+
     public static final int ACCESS_TOKEN_EXP_MIN = 60;      // 1시간
     public static final int REFRESH_TOKEN_EXP_MIN = 10080;  // 7일
+
 
     // ✅ 공통 토큰 생성 함수
     public static String generateToken(Map<String, Object> valueMap, int min, String tokenType) {
