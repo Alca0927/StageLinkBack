@@ -6,13 +6,17 @@ import com.pro.stagelink.dto.RefundDTO;
 import com.pro.stagelink.dto.ReservationDTO;
 
 public interface RegisterService {
-	// 예매 
-	ReservationDTO getReservation(int reservationNo);
+    // 예매 
+    ReservationDTO getReservation(int reservationNo);
 
-	PageResponseDTO<ReservationDTO> reservationList(PageRequestDTO pageRequestDTO);
-	
-	// 환불
-	RefundDTO getRefund(int refundNo);
-	
-	PageResponseDTO<RefundDTO> refundList(PageRequestDTO pageRequestDTO);
+    PageResponseDTO<ReservationDTO> reservationList(PageRequestDTO pageRequestDTO);
+
+    int getReservationTotalCount();  // 추가
+
+    // 환불
+    RefundDTO getRefund(int refundNo);
+
+    PageResponseDTO<RefundDTO> refundList(PageRequestDTO pageRequestDTO);
+
+    int getRefundTotalCount();  // 추가
 }

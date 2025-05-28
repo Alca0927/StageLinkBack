@@ -38,4 +38,9 @@ public class ShowLocation {
 	public void changeLocationAddress(String locationAddress) {
 		 this.locationAddress = locationAddress;
 	 }
+
+	public void changeFacilityId(String facilityId) {
+		this.facilityId = facilityId;
+		
+	}
 }
