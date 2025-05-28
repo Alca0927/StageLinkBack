@@ -92,4 +92,16 @@ public class RegisterServiceImpl implements RegisterService {
 
 		return responseDTO;
 	}
+
+	@Override
+	public int getReservationTotalCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int getRefundTotalCount() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
 }

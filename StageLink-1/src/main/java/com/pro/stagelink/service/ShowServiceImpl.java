@@ -35,48 +35,40 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class ShowServiceImpl implements ShowService {
-	private final ModelMapper modelMapper;
-	private final ShowRepository showRepository;
-	private final ShowInfoRepository showInfoRepository;
-	private final ShowLocationRepository showLocationRepository;
-	private final ShowSeatRepository showSeatRepository;
-	
-	// 등록----------------------------------
-	@Override
-	public Integer register(ShowDTO showDTO) {
-		log.info("-----show---------");
-		
-		Show show = modelMapper.map(showDTO, Show.class);
-		Show savedShow = showRepository.save(show);
-		
-		// 좌석 자동 생성
-		 createSeats(savedShow, "R", showDTO.getSeatRCount());
-	     createSeats(savedShow, "S", showDTO.getSeatSCount());
-	     createSeats(savedShow, "A", showDTO.getSeatACount());
-	     createSeats(savedShow, "VIP", showDTO.getSeatVipCount());
-		return savedShow.getShowNo();
-	}
+    private final ModelMapper modelMapper;
+    private final ShowRepository showRepository;
+    private final ShowInfoRepository showInfoRepository;
+    private final ShowLocationRepository showLocationRepository;
+    private final ShowSeatRepository showSeatRepository;
 
-	@Override
-	public int register(ShowInfoDTO showInfoDTO) {
-		log.info("------showInfo--------");
-		
-		ShowInfo showInfo = modelMapper.map(showInfoDTO, ShowInfo.class);
-		ShowInfo savedShowInfo = showInfoRepository.save(showInfo);
-		return savedShowInfo.getShowInfo();
-	}
+    // 등록
+    @Override
+    public Integer register(ShowDTO showDTO) {
+        Show show = modelMapper.map(showDTO, Show.class);
+        Show savedShow = showRepository.save(show);
+        createSeats(savedShow, "R", showDTO.getSeatRCount());
+        createSeats(savedShow, "S", showDTO.getSeatSCount());
+        createSeats(savedShow, "A", showDTO.getSeatACount());
+        createSeats(savedShow, "VIP", showDTO.getSeatVipCount());
+        return savedShow.getShowNo();
+    }
 
-	@Override
-	public int register(ShowLocationDTO showLocationDTO) {
-		log.info("-----ShowLocation---------");
-		
-		ShowLocation showLocation = modelMapper.map(showLocationDTO, ShowLocation.class);
-		ShowLocation savedShowLocation = showLocationRepository.save(showLocation);
-		return savedShowLocation.getShowlocation();
-	}
-	
-	// 좌석 등록
-	private void createSeats(Show show, String seatClass, int count) {
+    @Override
+    public int register(ShowInfoDTO showInfoDTO) {
+        ShowInfo showInfo = modelMapper.map(showInfoDTO, ShowInfo.class);
+        ShowInfo savedShowInfo = showInfoRepository.save(showInfo);
+        return savedShowInfo.getShowInfo();
+    }
+
+    @Override
+    public int register(ShowLocationDTO showLocationDTO) {
+        ShowLocation showLocation = modelMapper.map(showLocationDTO, ShowLocation.class);
+        ShowLocation savedShowLocation = showLocationRepository.save(showLocation);
+        return savedShowLocation.getShowlocation();
+    }
+
+    // 좌석 등록
+    private void createSeats(Show show, String seatClass, int count) {
         List<ShowSeat> seats = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
             ShowSeat seat = new ShowSeat();
@@ -88,188 +80,121 @@ public class ShowServiceImpl implements ShowService {
         }
         showSeatRepository.saveAll(seats);
     }
-	
-	
 
+    // 조회
+    @Override
+    public ShowDTO getShow(int showNo) {
+        Optional<Show> result = showRepository.findById(showNo);
+        Show show = result.orElseThrow();
+        return modelMapper.map(show, ShowDTO.class);
+    }
 
-	// 조회-----------------------------
-	@Override
-	public ShowDTO getShow(int showNo) {
-		java.util.Optional<Show> result = showRepository.findById(showNo);
-		
-		Show show = result.orElseThrow();
-		ShowDTO dto = modelMapper.map(show, ShowDTO.class);
-		
-		return dto;
-	}
+    @Override
+    public ShowInfoDTO getShowInfo(int showInfo) {
+        Optional<ShowInfo> result = showInfoRepository.findById(showInfo);
+        ShowInfo showinfo = result.orElseThrow();
+        ShowInfoDTO dto = modelMapper.map(showinfo, ShowInfoDTO.class);
 
-	@Override
-	public ShowInfoDTO getShowInfo(int showInfo) {
-		java.util.Optional<ShowInfo> result = showInfoRepository.findById(showInfo);
-		
-		ShowInfo showinfo = result.orElseThrow();		
-		ShowInfoDTO dto = modelMapper.map(showinfo, ShowInfoDTO.class);
-		
-		// 2. ShowLocation → ShowLocationDTO
-	    if (showinfo.getShowLocation() != null) {
-	        ShowLocationDTO showLocationDTO = modelMapper.map(showinfo.getShowLocation(), ShowLocationDTO.class);
-	        dto.setShowLocationDTO(showLocationDTO);  // 이 위치가 맞음!
-	    }
-	    System.out.println(dto.getShowLocationDTO());
-	    System.out.println(dto.getShowLocationDTO().getLocationName());
-		
-	    return dto;
-	}
+        if (showinfo.getShowLocation() != null) {
+            ShowLocationDTO showLocationDTO = modelMapper.map(showinfo.getShowLocation(), ShowLocationDTO.class);
+            dto.setShowLocationDTO(showLocationDTO);
+        }
 
-	@Override
-	public ShowLocationDTO getShowlocation(int showlocation) {
-		java.util.Optional<ShowLocation> result = showLocationRepository.findById(showlocation);
-		
-		ShowLocation showLocation = result.orElseThrow();
-		ShowLocationDTO dto = modelMapper.map(showLocation, ShowLocationDTO.class);
-		
-		return dto;
-	}
+        return dto;
+    }
 
-	
-	// 수정-------------------------------
-	@Override
-	public void modify(ShowDTO showDTO) {
-		Optional<Show> result = showRepository.findById(showDTO.getShowNo());
-		
-		Show show = result.orElseThrow();
-		
-		// DTO → Entity 변환 (GPT )
-	    ShowInfo showInfo = modelMapper.map(showDTO.getShowInfoDTO(), ShowInfo.class);
-		show.changeShowInfo(showInfo);
-		show.changeShowStartTime(showDTO.getShowStartTime());
-		show.changeShowEndTime(showDTO.getShowEndTime());
-		show.changeSeatRPrice(showDTO.getSeatRPrice());
-		show.changeSeatAPrice(showDTO.getSeatAPrice());
-		show.changeSeatSPrice(showDTO.getSeatSPrice());
-		show.changeSeatVipPrice(showDTO.getSeatVipPrice());
-		show.changeSeatRCount(showDTO.getSeatRCount());
-		show.changeSeatACount(showDTO.getSeatACount());
-		show.changeSeatSCount(showDTO.getSeatSCount());
-		show.changeSeatVipCount(showDTO.getSeatVipCount());
-		show.changeShowState(showDTO.getShowState());
-		
-		showRepository.save(show);
-	}
+    @Override
+    public ShowLocationDTO getShowlocation(int showlocation) {
+        Optional<ShowLocation> result = showLocationRepository.findById(showlocation);
+        ShowLocation showLocation = result.orElseThrow();
+        return modelMapper.map(showLocation, ShowLocationDTO.class);
+    }
 
-	@Override
-	public void modify(ShowInfoDTO showInfoDTO) {
-		Optional<ShowInfo> result = showInfoRepository.findById(showInfoDTO.getShowInfo());
-		
-		ShowInfo showInfo = result.orElseThrow();
-		
-		showInfo.changeShowPoster(showInfoDTO.getShowPoster());
-		showInfo.changeShowName(showInfoDTO.getShowName());
-		showInfo.changeShowExplain(showInfoDTO.getShowExplain());
-		showInfo.changeShowCategory(showInfoDTO.getShowCategory());
-		showInfo.changeShowAge(showInfoDTO.getShowAge());
-		showInfo.changeShowDuration(showInfoDTO.getShowDuration());
-		
-		// DTO → Entity 변환 (GPT )
-	    ShowLocation showLocation = modelMapper.map(showInfoDTO.getShowLocationDTO(), ShowLocation.class);
-		showInfo.changeShowLocation(showLocation);
-		showInfo.changeShowStyUrl1(showInfoDTO.getShowStyUrl1());
-		showInfo.changeShowStyUrl2(showInfoDTO.getShowStyUrl2());
-		showInfo.changeShowStyUrl3(showInfoDTO.getShowStyUrl3());
-		showInfo.changeShowStyUrl4(showInfoDTO.getShowStyUrl4());
-		
-		showInfoRepository.save(showInfo);
-		
-	}
+    // 수정
+    @Override
+    public void modify(ShowDTO showDTO) {
+        Optional<Show> result = showRepository.findById(showDTO.getShowNo());
+        Show show = result.orElseThrow();
+        ShowInfo showInfo = modelMapper.map(showDTO.getShowInfoDTO(), ShowInfo.class);
+        show.changeShowInfo(showInfo);
+        show.changeShowStartTime(showDTO.getShowStartTime());
+        show.changeShowEndTime(showDTO.getShowEndTime());
+        show.changeSeatRPrice(showDTO.getSeatRPrice());
+        show.changeSeatAPrice(showDTO.getSeatAPrice());
+        show.changeSeatSPrice(showDTO.getSeatSPrice());
+        show.changeSeatVipPrice(showDTO.getSeatVipPrice());
+        show.changeSeatRCount(showDTO.getSeatRCount());
+        show.changeSeatACount(showDTO.getSeatACount());
+        show.changeSeatSCount(showDTO.getSeatSCount());
+        show.changeSeatVipCount(showDTO.getSeatVipCount());
+        show.changeShowState(showDTO.getShowState());
+        showRepository.save(show);
+    }
 
-	@Override
-	public void modify(ShowLocationDTO showLocationDTO) {
-		Optional<ShowLocation> result = showLocationRepository.findById(showLocationDTO.getShowlocation());
-		
-		ShowLocation showLocation = result.orElseThrow();
-		
-		showLocation.changeLocationName(showLocation.getLocationName());
-		showLocation.changeLocationAddress(showLocationDTO.getLocationAddress());
-		
-		showLocationRepository.save(showLocation);
-	}
+    @Override
+    public void modify(ShowInfoDTO showInfoDTO) {
+        Optional<ShowInfo> result = showInfoRepository.findById(showInfoDTO.getShowInfo());
+        ShowInfo showInfo = result.orElseThrow();
+        showInfo.changeShowPoster(showInfoDTO.getShowPoster());
+        showInfo.changeShowName(showInfoDTO.getShowName());
+        showInfo.changeShowExplain(showInfoDTO.getShowExplain());
+        showInfo.changeShowCategory(showInfoDTO.getShowCategory());
+        showInfo.changeShowAge(showInfoDTO.getShowAge());
+        showInfo.changeShowDuration(showInfoDTO.getShowDuration());
+        ShowLocation showLocation = modelMapper.map(showInfoDTO.getShowLocationDTO(), ShowLocation.class);
+        showInfo.changeShowLocation(showLocation);
+        showInfo.changeShowStyUrl1(showInfoDTO.getShowStyUrl1());
+        showInfo.changeShowStyUrl2(showInfoDTO.getShowStyUrl2());
+        showInfo.changeShowStyUrl3(showInfoDTO.getShowStyUrl3());
+        showInfo.changeShowStyUrl4(showInfoDTO.getShowStyUrl4());
+        showInfoRepository.save(showInfo);
+    }
 
-	
-	// 삭제---------------------------
-	@Override
-	public void removeShow(Integer tno) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void modify(ShowLocationDTO showLocationDTO) {
+        Optional<ShowLocation> result = showLocationRepository.findById(showLocationDTO.getShowlocation());
+        ShowLocation showLocation = result.orElseThrow();
 
-	@Override
-	public void removeShowInfo(Integer tno) {
-		// TODO Auto-generated method stub
-		
-	}
+        // ✅ 수정된 부분
+        showLocation.changeFacilityId(showLocationDTO.getFacilityId());
+        showLocation.changeLocationName(showLocationDTO.getLocationName());
+        showLocation.changeLocationAddress(showLocationDTO.getLocationAddress());
 
-	@Override
-	public void removeShowLocation(Integer tno) {
-		// TODO Auto-generated method stub
-		
-	}
-	
-	// 목록 ----------------------------------------------
+        showLocationRepository.save(showLocation);
+    }
 
-	@Override
-	public PageResponseDTO<ShowDTO> showList(PageRequestDTO pageRequestDTO) {
-		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("showNo").descending());
+    // 삭제
+    @Override
+    public void removeShow(Integer tno) {}
 
-		Page<Show> result = showRepository.findAll(pageable);
+    @Override
+    public void removeShowInfo(Integer tno) {}
 
-		List<ShowDTO> dtoList = result.getContent().stream().map(show -> modelMapper.map(show, ShowDTO.class))
-				.collect(Collectors.toList());
+    @Override
+    public void removeShowLocation(Integer tno) {}
 
-		long totalCount = result.getTotalElements();
+    // 목록
+    @Override
+    public PageResponseDTO<ShowDTO> showList(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by("showNo").descending());
+        Page<Show> result = showRepository.findAll(pageable);
+        List<ShowDTO> dtoList = result.getContent().stream().map(show -> modelMapper.map(show, ShowDTO.class)).collect(Collectors.toList());
+        return PageResponseDTO.<ShowDTO>withAll().dtoList(dtoList).pageRequestDTO(pageRequestDTO).totalCount(result.getTotalElements()).build();
+    }
 
-		PageResponseDTO<ShowDTO> responseDTO = PageResponseDTO.<ShowDTO>withAll().dtoList(dtoList)
-				.pageRequestDTO(pageRequestDTO).totalCount(totalCount).build();
+    @Override
+    public PageResponseDTO<ShowInfoDTO> showInfoList(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by("showInfo").descending());
+        Page<ShowInfo> result = showInfoRepository.findAll(pageable);
+        List<ShowInfoDTO> dtoList = result.getContent().stream().map(showInfo -> modelMapper.map(showInfo, ShowInfoDTO.class)).collect(Collectors.toList());
+        return PageResponseDTO.<ShowInfoDTO>withAll().dtoList(dtoList).pageRequestDTO(pageRequestDTO).totalCount(result.getTotalElements()).build();
+    }
 
-		return responseDTO;
-	}
-
-	@Override
-	public PageResponseDTO<ShowInfoDTO> showInfoList(PageRequestDTO pageRequestDTO) {
-		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("showInfo").descending());
-
-		Page<ShowInfo> result = showInfoRepository.findAll(pageable);
-
-		List<ShowInfoDTO> dtoList = result.getContent().stream().map(showInfo -> modelMapper.map(showInfo, ShowInfoDTO.class))
-				.collect(Collectors.toList());
-
-		long totalCount = result.getTotalElements();
-
-		PageResponseDTO<ShowInfoDTO> responseDTO = PageResponseDTO.<ShowInfoDTO>withAll().dtoList(dtoList)
-				.pageRequestDTO(pageRequestDTO).totalCount(totalCount).build();
-
-		return responseDTO;
-	}
-
-	@Override
-	public PageResponseDTO<ShowLocationDTO> showLocationList(PageRequestDTO pageRequestDTO) {
-		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("showlocation").descending());
-
-		Page<ShowLocation> result = showLocationRepository.findAll(pageable);
-
-		List<ShowLocationDTO> dtoList = result.getContent().stream().map(showLocation -> modelMapper.map(showLocation, ShowLocationDTO.class))
-				.collect(Collectors.toList());
-
-		long totalCount = result.getTotalElements();
-
-		PageResponseDTO<ShowLocationDTO> responseDTO = PageResponseDTO.<ShowLocationDTO>withAll().dtoList(dtoList)
-				.pageRequestDTO(pageRequestDTO).totalCount(totalCount).build();
-
-		return responseDTO;
-	}
-	
-	
-
+    @Override
+    public PageResponseDTO<ShowLocationDTO> showLocationList(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by("showlocation").descending());
+        Page<ShowLocation> result = showLocationRepository.findAll(pageable);
+        List<ShowLocationDTO> dtoList = result.getContent().stream().map(showLocation -> modelMapper.map(showLocation, ShowLocationDTO.class)).collect(Collectors.toList());
+        return PageResponseDTO.<ShowLocationDTO>withAll().dtoList(dtoList).pageRequestDTO(pageRequestDTO).totalCount(result.getTotalElements()).build();
+    }
 }
