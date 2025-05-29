@@ -1,13 +1,8 @@
 package com.pro.stagelink.controller;
 
-import java.io.IOException;
-import java.nio.file.*;
 import java.util.Map;
-import java.util.UUID;
 
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.pro.stagelink.dto.*;
 import com.pro.stagelink.service.ActorService;
@@ -20,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequestMapping("/admin")
 public class ActorController {
+
     private final ActorService actorService;
 
     // 배우 목록
@@ -43,42 +39,17 @@ public class ActorController {
         return Map.of("actorNo", actorNo);
     }
 
-    // 배우 수정 (파일 포함)
+    // ✅ 배우 수정 (Cloudinary URL 포함 JSON 요청 처리)
     @PutMapping("/showmanager/actor/{actorNo}")
     public Map<String, String> modifyActor(
         @PathVariable("actorNo") int actorNo,
-        @RequestParam("actorName") String actorName,
-        @RequestParam("actorProfile") String actorProfile,
-        @RequestPart(value = "actorImage", required = false) MultipartFile actorImage
+        @RequestBody ActorDTO actorDTO
     ) {
-        log.info("Modify actorNo={}, name={}, profile={}", actorNo, actorName, actorProfile);
+        log.info("Modify actorDTO = {}", actorDTO);
 
-        String imageUrl = null;
-        if (actorImage != null && !actorImage.isEmpty()) {
-            try {
-                String fileName = UUID.randomUUID() + "_" + actorImage.getOriginalFilename();
-                Path uploadPath = Paths.get("src/main/resources/static/images");
-                if (!Files.exists(uploadPath)) {
-                    Files.createDirectories(uploadPath);
-                }
-                Path filePath = uploadPath.resolve(fileName);
-                Files.copy(actorImage.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                imageUrl = "/images/" + fileName;
-            } catch (IOException e) {
-                log.error("이미지 업로드 실패", e);
-                throw new RuntimeException("파일 저장 오류");
-            }
-        }
-
-        ActorDTO actorDTO = new ActorDTO();
-        actorDTO.setActorNo(actorNo);
-        actorDTO.setActorName(actorName);
-        actorDTO.setActorProfile(actorProfile);
-        if (imageUrl != null) {
-            actorDTO.setActorImage(imageUrl);
-        }
-
+        actorDTO.setActorNo(actorNo); // 경로변수로 받은 번호를 DTO에 설정
         actorService.modify(actorDTO);
+
         return Map.of("RESULT", "SUCCESS");
     }
 

@@ -2,6 +2,8 @@ package com.pro.stagelink.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Getter;
@@ -14,15 +16,16 @@ import lombok.Setter;
 public class Notice {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_no")
-    private int noticeNo;  // 공지번호
+    private Integer noticeNo;
 
-    @Column(name = "notice_content")
-    private String noticeContent;  // 공지내용
+    @Column(name = "notice_content", nullable = false)
+    private String noticeContent;
 
     @Column(name = "notice_date")
-    private String noticeDate;  // 작성일
+    private String noticeDate;
 
-    @Column(name = "notice_title")
-    private String noticeTitle;  // 공지제목
+    @Column(name = "notice_title", nullable = false)
+    private String noticeTitle;
 }

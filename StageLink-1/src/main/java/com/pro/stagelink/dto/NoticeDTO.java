@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class NoticeDTO {
-    private int noticeNo;
+    private Integer noticeNo;
     private String noticeTitle;
     private String noticeContent;
     private String noticeDate;
