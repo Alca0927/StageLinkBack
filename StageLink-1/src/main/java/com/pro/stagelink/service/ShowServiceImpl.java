@@ -156,14 +156,13 @@ public class ShowServiceImpl implements ShowService {
         ShowLocation showLocation = result.orElseThrow();
 
         // ✅ 수정된 부분
-        showLocation.changeFacilityId(showLocationDTO.getFacilityId());
         showLocation.changeLocationName(showLocationDTO.getLocationName());
         showLocation.changeLocationAddress(showLocationDTO.getLocationAddress());
 
         showLocationRepository.save(showLocation);
     }
 
-    // 삭제
+    //삭제
     @Override
     public void removeShow(Integer tno) {}
 

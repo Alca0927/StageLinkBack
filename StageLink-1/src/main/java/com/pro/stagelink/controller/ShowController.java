@@ -27,7 +27,7 @@ import lombok.extern.log4j.Log4j2;
 public class ShowController {
 	private final ShowService showService;
 	
-	// 공연 목록
+	// 공연 목록 ------------------------------------------------------------
 	@GetMapping("/showmanager/show/list")
 	public PageResponseDTO<ShowDTO> showList(PageRequestDTO pageRequestDTO){
 		log.info("---------showlist-----------");
@@ -55,7 +55,7 @@ public class ShowController {
 		return Map.of("RESULT","SUCCESS");
 	}
 	
-	// 공연 상세 정보
+	// 공연 상세 정보 ------------------------------------------------------------
 	@GetMapping("/showmanager/showinfo/list")
 	public PageResponseDTO<ShowInfoDTO> showInfoList(PageRequestDTO pageRequestDTO){
 		log.info("---------showlist-----------");
@@ -83,7 +83,7 @@ public class ShowController {
 		return Map.of("RESULT","SUCCESS");
 	}
 	
-	// 공연장
+	// 공연장 ------------------------------------------------------------
 	@GetMapping("/showmanager/location/list")
 	public PageResponseDTO<ShowLocationDTO> showLocationList(PageRequestDTO pageRequestDTO){
 		log.info("---------showlist-----------");
