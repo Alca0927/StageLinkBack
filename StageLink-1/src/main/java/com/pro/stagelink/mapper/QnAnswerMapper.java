@@ -15,7 +15,7 @@ public class QnAnswerMapper {
         dto.setQuestionContents(qnAnswer.getQuestionContents());
         dto.setAnswerContents(qnAnswer.getAnswerContents());
         dto.setCreateDate(qnAnswer.getCreateDate());
-        dto.setQnaRating(qnAnswer.getQnaRating());
+        //dto.setQnaRating(qnAnswer.getQnaRating());
         return dto;
     }
 }
