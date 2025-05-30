@@ -29,12 +29,13 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
 
         log.info("✅ Login Success: {}", authentication);
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        // 무조건 Admin으로 고정
+        String fixedUsername = "Admin";
 
         // ✅ claims 구성
         Map<String, Object> claims = new HashMap<>();
-        claims.put("username", userDetails.getUsername());
-        claims.put("roles", userDetails.getAuthorities().stream()
+        claims.put("username", fixedUsername);
+        claims.put("roles", authentication.getAuthorities().stream()
                 .map(auth -> auth.getAuthority())
                 .collect(Collectors.toList()));
 
@@ -42,7 +43,6 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         String accessToken = JWTUtil.generateAccessToken(claims);
         String refreshToken = JWTUtil.generateRefreshToken(claims);
 
-        // ✅ 로그 확인
         log.info("✅ AccessToken 생성: {}", accessToken);
         log.info("✅ RefreshToken 생성: {}", refreshToken);
 
@@ -50,15 +50,14 @@ public class APILoginSuccessHandler implements AuthenticationSuccessHandler {
         Map<String, Object> tokenMap = new HashMap<>();
         tokenMap.put("accessToken", accessToken);
         tokenMap.put("refreshToken", refreshToken);
-        tokenMap.put("username", userDetails.getUsername());
+        tokenMap.put("username", fixedUsername); // 역시 Admin 고정
 
-        // ✅ 응답 전송
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json; charset=UTF-8");
 
         PrintWriter writer = response.getWriter();
         writer.println(new Gson().toJson(tokenMap));
-        writer.flush(); // 👈 flush 명시
+        writer.flush();
         writer.close();
     }
 }

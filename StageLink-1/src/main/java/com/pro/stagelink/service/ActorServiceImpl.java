@@ -18,13 +18,9 @@ import com.pro.stagelink.dto.ActorDTO;
 import com.pro.stagelink.dto.ActorShowDTO;
 import com.pro.stagelink.dto.PageRequestDTO;
 import com.pro.stagelink.dto.PageResponseDTO;
-import com.pro.stagelink.dto.ShowInfoDTO;
 import com.pro.stagelink.repository.ActorRepository;
 import com.pro.stagelink.repository.ActorShowRepository;
 import com.pro.stagelink.repository.ShowInfoRepository;
-import com.pro.stagelink.repository.ShowLocationRepository;
-import com.pro.stagelink.repository.ShowRepository;
-import com.pro.stagelink.repository.ShowSeatRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,139 +31,162 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class ActorServiceImpl implements ActorService {
-	private final ModelMapper modelMapper;
-	private final ActorRepository actorRepository;
-	private final ActorShowRepository actorShowRepository;
-	private final ShowInfoRepository showInfoRepository;
-	
-	// 등록----------------------------------
-	@Override
-	public int register(ActorDTO ActorDTO) {
-		log.info("--------Actor--------");
-		
-		Actor actor = modelMapper.map(ActorDTO, Actor.class);
-		Actor savedActor = actorRepository.save(actor);
-		
-		return savedActor.getActorNo();
-	}
 
-	@Override
-	public int register(ActorShowDTO ActorShowDTO) {
+    private final ModelMapper modelMapper;
+    private final ActorRepository actorRepository;
+    private final ActorShowRepository actorShowRepository;
+    private final ShowInfoRepository showInfoRepository;
 
-		ActorShow actorShow = modelMapper.map(ActorShowDTO, ActorShow.class);
-		ActorShow savedActorShow = actorShowRepository.save(actorShow);
-		
-		return savedActorShow.getActor().getActorNo();
-	}
+    // 배우 등록
+    @Override
+    public int register(ActorDTO actorDTO) {
+        Actor actor = modelMapper.map(actorDTO, Actor.class);
+        Actor savedActor = actorRepository.save(actor);
+        return savedActor.getActorNo();
+    }
 
-	// 조회----------------------------------
-	@Override
-	public ActorDTO getActor(int actorNo) {
-		Optional<Actor> result = actorRepository.findById(actorNo);
-		Actor actor = result.orElseThrow();
-		ActorDTO dto = modelMapper.map(actor, ActorDTO.class);
-		return dto;
-	}
+    // 배우-공연 등록
+    @Override
+    public int register(ActorShowDTO actorShowDTO) {
+        ActorShow actorShow = modelMapper.map(actorShowDTO, ActorShow.class);
+        ActorShow savedActorShow = actorShowRepository.save(actorShow);
+        return savedActorShow.getActor().getActorNo();
+    }
 
-	@Override
-	public ActorShowDTO getActorShow(int actorNo, int showInfoId) {
-	    Actor actor = actorRepository.findById(actorNo)
-	        .orElseThrow(() -> new RuntimeException("배우가 존재하지 않습니다: " + actorNo));
-	    
-	    ShowInfo showInfo = showInfoRepository.findById(showInfoId)
-	        .orElseThrow(() -> new RuntimeException("공연 정보가 존재하지 않습니다: " + showInfoId));
-	    
-	    // ActorShow 조회
-	    Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actor, showInfo);
-	    ActorShow actorShow = result.orElseThrow(() -> 
-	        new RuntimeException("배우-공연 매칭 정보가 존재하지 않습니다."));
+    // 배우 조회
+    @Override
+    public ActorDTO getActor(int actorNo) {
+        Optional<Actor> result = actorRepository.findById(actorNo);
+        Actor actor = result.orElseThrow();
+        return modelMapper.map(actor, ActorDTO.class);
+    }
 
-	    // DTO로 변환해서 반환
-	    return modelMapper.map(actorShow, ActorShowDTO.class);
-	}
+    // 배우-공연 조회
+    @Override
+    public ActorShowDTO getActorShow(int actorNo, int showInfoId) {
+        Actor actor = actorRepository.findById(actorNo)
+            .orElseThrow(() -> new RuntimeException("배우가 존재하지 않습니다: " + actorNo));
 
-	
-	// 수정----------------------------------
-	@Override
-	public void modify(ActorDTO actorDTO) {
-		Optional<Actor> result = actorRepository.findById(actorDTO.getActorNo());
-		
-		Actor actor = result.orElseThrow();
-		
-		actor.changeActorImage(actorDTO.getActorImage());
-		actor.changeActorName(actorDTO.getActorName());
-		actor.changeActorProfile(actorDTO.getActorProfile());
-		
-		actorRepository.save(actor);
-	}
+        ShowInfo showInfo = showInfoRepository.findById(showInfoId)
+            .orElseThrow(() -> new RuntimeException("공연 정보가 존재하지 않습니다: " + showInfoId));
 
-	@Override
-	public void modify(ActorShowDTO actorShowDTO) {
-	    // 1. 먼저 기존 배우와 공연 정보가 실제로 존재하는지 확인
-	    Actor actor = actorRepository.findById(actorShowDTO.getActorDTO().getActorNo())
-	        .orElseThrow(() -> new RuntimeException("배우가 존재하지 않습니다: " + actorShowDTO.getActorDTO().getActorNo()));
-	    
-	    ShowInfo showInfo = showInfoRepository.findById(actorShowDTO.getShowInfoDTO().getShowInfo())
-	        .orElseThrow(() -> new RuntimeException("공연 정보가 존재하지 않습니다: " + actorShowDTO.getShowInfoDTO().getShowInfo()));
-	    
-	    // 2. 기존 ActorShow 조회
-	    Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actor, showInfo);
-	    ActorShow actorShow = result.orElseThrow(() -> 
-	        new RuntimeException("배우-공연 매칭 정보를 찾을 수 없습니다.")
-	    );
-	    
-	    // 3. 변경 가능한 필드들만 수정 (복합키는 변경하지 않음)
-	    if (actorShowDTO.getRoleName() != null) {
-	        actorShow.changeRoleName(actorShowDTO.getRoleName());
-	    }
-	    
-	    if (actorShowDTO.getShowStartTime() != null) {
-	        actorShow.changeShowStartTime(actorShowDTO.getShowStartTime());
-	    }
-	    
-	    if (actorShowDTO.getShowEndTime() != null) {
-	        actorShow.changeShowEndTime(actorShowDTO.getShowEndTime());
-	    }
+        Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actor, showInfo);
+        ActorShow actorShow = result.orElseThrow(() ->
+            new RuntimeException("배우-공연 매칭 정보가 존재하지 않습니다."));
 
-	    // 4. 저장
-	    actorShowRepository.save(actorShow);
-	}
+        return modelMapper.map(actorShow, ActorShowDTO.class);
+    }
 
-	// 목록----------------------------------
-	@Override
-	public PageResponseDTO<ActorDTO> ActorList(PageRequestDTO pageRequestDTO) {
-		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("actorNo").descending());
+    // 배우 수정
+    @Override
+    public void modify(ActorDTO actorDTO) {
+        Optional<Actor> result = actorRepository.findById(actorDTO.getActorNo());
+        Actor actor = result.orElseThrow();
 
-		Page<Actor> result = actorRepository.findAll(pageable);
+        actor.changeActorImage(actorDTO.getActorImage());
+        actor.changeActorName(actorDTO.getActorName());
+        actor.changeActorProfile(actorDTO.getActorProfile());
 
-		List<ActorDTO> dtoList = result.getContent().stream().map(actor -> modelMapper.map(actor, ActorDTO.class))
-				.collect(Collectors.toList());
+        actorRepository.save(actor);
+    }
 
-		long totalCount = result.getTotalElements();
+    // 배우-공연 수정
+    @Override
+    public void modify(ActorShowDTO actorShowDTO) {
+        Actor actor = actorRepository.findById(actorShowDTO.getActorDTO().getActorNo())
+            .orElseThrow(() -> new RuntimeException("배우가 존재하지 않습니다: " + actorShowDTO.getActorDTO().getActorNo()));
 
-		PageResponseDTO<ActorDTO> responseDTO = PageResponseDTO.<ActorDTO>withAll().dtoList(dtoList)
-				.pageRequestDTO(pageRequestDTO).totalCount(totalCount).build();
+        ShowInfo showInfo = showInfoRepository.findById(actorShowDTO.getShowInfoDTO().getShowInfo())
+            .orElseThrow(() -> new RuntimeException("공연 정보가 존재하지 않습니다: " + actorShowDTO.getShowInfoDTO().getShowInfo()));
 
-		return responseDTO;
-	}
+        Optional<ActorShow> result = actorShowRepository.findByActorAndShowInfo(actor, showInfo);
+        ActorShow actorShow = result.orElseThrow(() ->
+            new RuntimeException("배우-공연 매칭 정보를 찾을 수 없습니다."));
 
-	@Override
-	public PageResponseDTO<ActorShowDTO> ActorShowList(PageRequestDTO pageRequestDTO) {
-		Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, // 1페이지가 0이므로 주의
-				pageRequestDTO.getSize(), Sort.by("actor.actorNo").descending());
+        if (actorShowDTO.getRoleName() != null) {
+            actorShow.changeRoleName(actorShowDTO.getRoleName());
+        }
+        if (actorShowDTO.getShowStartTime() != null) {
+            actorShow.changeShowStartTime(actorShowDTO.getShowStartTime());
+        }
+        if (actorShowDTO.getShowEndTime() != null) {
+            actorShow.changeShowEndTime(actorShowDTO.getShowEndTime());
+        }
 
-		Page<ActorShow> result = actorShowRepository.findAll(pageable);
+        actorShowRepository.save(actorShow);
+    }
 
-		List<ActorShowDTO> dtoList = result.getContent().stream().map(actorShow -> modelMapper.map(actorShow, ActorShowDTO.class))
-				.collect(Collectors.toList());
+    // 배우 목록
+    @Override
+    public PageResponseDTO<ActorDTO> ActorList(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+            pageRequestDTO.getPage() - 1,
+            pageRequestDTO.getSize(),
+            Sort.by("actorNo").descending()
+        );
 
-		long totalCount = result.getTotalElements();
+        Page<Actor> result;
 
-		PageResponseDTO<ActorShowDTO> responseDTO = PageResponseDTO.<ActorShowDTO>withAll().dtoList(dtoList)
-				.pageRequestDTO(pageRequestDTO).totalCount(totalCount).build();
+        // 🔍 이름으로 검색
+        String keyword = pageRequestDTO.getName();
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            result = actorRepository.findByActorNameContaining(keyword.trim(), pageable);
+        } else {
+            result = actorRepository.findAll(pageable);
+        }
 
-		return responseDTO;
-	}
+        List<ActorDTO> dtoList = result.getContent().stream()
+            .map(actor -> modelMapper.map(actor, ActorDTO.class))
+            .collect(Collectors.toList());
+
+        return PageResponseDTO.<ActorDTO>withAll()
+            .dtoList(dtoList)
+            .pageRequestDTO(pageRequestDTO)
+            .totalCount(result.getTotalElements())
+            .build();
+    }
+
+    // 배우-공연 목록 (검색 포함)
+    @Override
+    public PageResponseDTO<ActorShowDTO> ActorShowList(PageRequestDTO pageRequestDTO) {
+        Pageable pageable = PageRequest.of(
+            pageRequestDTO.getPage() - 1,
+            pageRequestDTO.getSize(),
+            Sort.by("actor.actorNo").descending()
+        );
+
+        String type = pageRequestDTO.getType();
+        String keyword = pageRequestDTO.getKeyword();
+
+        Page<ActorShow> result;
+
+        if (type != null && keyword != null && !keyword.trim().isEmpty()) {
+            if (type.equals("actor")) {
+                result = actorShowRepository.findByActor_ActorNameContaining(keyword.trim(), pageable);
+            } else if (type.equals("show")) {
+                result = actorShowRepository.findByShowInfo_ShowNameContaining(keyword.trim(), pageable);
+            } else {
+                result = actorShowRepository.findAll(pageable);
+            }
+        } else {
+            result = actorShowRepository.findAll(pageable);
+        }
+
+        List<ActorShowDTO> dtoList = result.getContent().stream()
+            .map(actorShow -> modelMapper.map(actorShow, ActorShowDTO.class))
+            .collect(Collectors.toList());
+
+        return PageResponseDTO.<ActorShowDTO>withAll()
+            .dtoList(dtoList)
+            .pageRequestDTO(pageRequestDTO)
+            .totalCount(result.getTotalElements())
+            .build();
+    }
+    
+    @Override
+    public int getTotalCount() {
+        return (int) actorRepository.count();
+    }
+
+
 }
-

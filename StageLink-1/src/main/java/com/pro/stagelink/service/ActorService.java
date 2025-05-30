@@ -25,4 +25,7 @@ public interface ActorService {
 	// 목록 (페이징 구현) ---------------------------
 	PageResponseDTO<ActorDTO> ActorList(PageRequestDTO pageRequestDTO);
 	PageResponseDTO<ActorShowDTO> ActorShowList(PageRequestDTO pageRequestDTO);
+	
+	int getTotalCount();
+
 }
