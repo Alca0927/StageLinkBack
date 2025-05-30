@@ -35,12 +35,10 @@ public class NoticeService {
                 .map(notice -> modelMapper.map(notice, NoticeDTO.class))
                 .collect(Collectors.toList());
 
-        long totalCount = result.getTotalElements();
-
         return PageResponseDTO.<NoticeDTO>withAll()
                 .dtoList(dtoList)
                 .pageRequestDTO(pageRequestDTO)
-                .totalCount(totalCount)
+                .totalCount(result.getTotalElements())
                 .build();
     }
 

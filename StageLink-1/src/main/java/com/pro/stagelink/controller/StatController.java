@@ -1,6 +1,7 @@
 package com.pro.stagelink.controller;
 
 import com.pro.stagelink.dto.MemberStatDTO;
+import com.pro.stagelink.dto.SalesShowStatDTO;
 import com.pro.stagelink.dto.SalesStatDTO;
 import com.pro.stagelink.service.MemberStatService;
 import com.pro.stagelink.service.SalesStatService;
@@ -8,6 +9,8 @@ import com.pro.stagelink.service.ShowService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -65,9 +68,29 @@ public class StatController {
         
         try {
             SalesStatDTO salesStat = salesStatService.recalculateSalesStat(year, month);
+            log.info("매출 통계 재계산 요청: {}원",salesStat);
             return ResponseEntity.ok(salesStat);
         } catch (Exception e) {
             log.error("매출 통계 재계산 실패: {}년 {}월, 오류: {}", year, month, e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+    
+    // 월별 통계 세부 사항
+    // 월별 통계 세부 사항 - 경로 수정
+    @GetMapping("/stat/show/{year}/{month}")
+    public ResponseEntity<List<SalesShowStatDTO>> getMonthlyShowSalesDetail(
+            @PathVariable("year") int year,
+            @PathVariable("month") int month) {
+        
+        log.info("공연별 매출 상세 조회 요청: {}년 {}월", year, month);
+        
+        try {
+            List<SalesShowStatDTO> result = salesStatService.getMonthlyShowSalesDetail(year, month);
+            log.info("공연별 매출 상세 조회 결과: {} 건", result.size());
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error("공연별 매출 상세 조회 실패: {}년 {}월, 오류: {}", year, month, e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
     }
