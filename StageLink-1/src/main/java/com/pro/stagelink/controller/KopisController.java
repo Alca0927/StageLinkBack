@@ -10,7 +10,7 @@ import com.pro.stagelink.service.KopisService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 public class KopisController {
 	private final KopisService kopisService;
