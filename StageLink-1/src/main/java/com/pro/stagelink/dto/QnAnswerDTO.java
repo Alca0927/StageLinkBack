@@ -1,5 +1,7 @@
 package com.pro.stagelink.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +13,7 @@ public class QnAnswerDTO {
     private String questionContents;
     private String answerContents;
     private String createDate;
+    
+    @JsonIgnore
     private int qnaRating;
 }

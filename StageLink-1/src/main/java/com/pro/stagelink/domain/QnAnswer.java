@@ -17,5 +17,5 @@ public class QnAnswer {
     private String questionContents; // 질문
     private String answerContents; // 답변
     private String createDate; // 작성일
-    private int qnaRating;   // 평점
+    //private int qnaRating;   // 평점
 }
