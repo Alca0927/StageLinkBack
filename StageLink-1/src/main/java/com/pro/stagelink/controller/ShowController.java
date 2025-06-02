@@ -1,7 +1,9 @@
 package com.pro.stagelink.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +17,7 @@ import com.pro.stagelink.dto.PageResponseDTO;
 import com.pro.stagelink.dto.ShowDTO;
 import com.pro.stagelink.dto.ShowInfoDTO;
 import com.pro.stagelink.dto.ShowLocationDTO;
+import com.pro.stagelink.service.ActorService;
 import com.pro.stagelink.service.ShowService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +29,7 @@ import lombok.extern.log4j.Log4j2;
 @RequestMapping("/admin")
 public class ShowController {
 	private final ShowService showService;
+	private final ActorService actorService;
 	
 	// 공연 목록 ------------------------------------------------------------
 	@GetMapping("/showmanager/show/list")
@@ -109,5 +113,18 @@ public class ShowController {
 		showService.modify(showLocationDTO);
 		
 		return Map.of("RESULT","SUCCESS");
+	}
+	
+	// 공연 관리 메인 페이지
+	@GetMapping("/showmanager")
+	public ResponseEntity<Map<String,Integer>> getShowSummary(){
+		int showCount = (int) showService.getTotalCount();
+		int actorCount = (int) actorService.getTotalCount();
+		
+		Map<String, Integer> summary = new HashMap<>();
+		summary.put("showCount",showCount);
+		summary.put("actorCount", actorCount);
+		
+		return ResponseEntity.ok(summary);
 	}
 }
