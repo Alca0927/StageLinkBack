@@ -59,4 +59,14 @@ public class NoticeController {
         NoticeDTO dto = noticeService.getNotice(noticeNo);
         return ResponseEntity.ok(dto);
     }
+    
+    // 공지사항 수정
+    @PutMapping("/{noticeNo}")
+    public Map<String, String> modify(@PathVariable(name = "noticeNo") int noticeNo, @RequestBody NoticeDTO dto){
+    	dto.setNoticeNo(noticeNo);
+    	log.info("Modify : " + dto);
+    	noticeService.modify(dto);
+    	
+    	return Map.of("RESULT","SUCCESS");
+    }
 }

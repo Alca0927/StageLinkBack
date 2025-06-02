@@ -28,4 +28,12 @@ public class Notice {
 
     @Column(name = "notice_title", nullable = false)
     private String noticeTitle;
+    
+    public void changeNoticeContent(String noticeContent) {
+    	this.noticeContent = noticeContent;
+    }
+    
+    public void changeNoticeTitle(String noticeTitle) {
+    	this.noticeTitle = noticeTitle;
+    }
 }
