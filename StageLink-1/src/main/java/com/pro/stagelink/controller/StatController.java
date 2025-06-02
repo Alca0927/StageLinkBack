@@ -31,10 +31,11 @@ public class StatController {
 	
 	
     // 회원 통계 수동 실행용
-    @PostMapping("/generate")
-    public String generateMonthlyStat() {
-        memberStatService.createMonthlyStat();
-        return "통계 생성 완료";
+    @PostMapping("/stat/member/{year}/{month}")
+    public  MemberStatDTO generateMemberStat(@PathVariable(name="year") int year, @PathVariable(name="month") int month) {
+        memberStatService.createMonthlyStat(year,month);
+        
+        return memberStatService.getMemberStat(year,month);
     }
     
     /**

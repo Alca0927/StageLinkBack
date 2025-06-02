@@ -12,6 +12,7 @@ import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -53,12 +54,20 @@ public class NoticeService {
         return noticeRepository.count();
     }
     
- // 공지사항 상세 조회
+    // 공지사항 상세 조회
     public NoticeDTO getNotice(Integer noticeNo) {
         Notice notice = noticeRepository.findById(noticeNo)
                 .orElseThrow(() -> new IllegalArgumentException("해당 공지사항이 존재하지 않습니다."));
         return modelMapper.map(notice, NoticeDTO.class);
     }
 
+    // 공지사항 수정
+    public void modify(NoticeDTO dto) {
+    	Optional<Notice> result = noticeRepository.findById(dto.getNoticeNo());
+    	Notice notice = result.orElseThrow();
+    	notice.changeNoticeContent(dto.getNoticeContent());
+    	notice.changeNoticeTitle(dto.getNoticeTitle());
+    	noticeRepository.save(notice);
+    }
 
 }

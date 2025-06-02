@@ -20,26 +20,34 @@ public class MemberStatService {
 	private final MemberRepository memberRepository;
     private final MemberStatRepository memberStatRepository;
 
-    public void createMonthlyStat() {
-        // 오늘 날짜에서 전월 구하기
-        LocalDate now = LocalDate.now();
-        LocalDate targetDate = now.minusMonths(1);
-
-        int year = targetDate.getYear();
-        int month = targetDate.getMonthValue();
-
+    public MemberStatDTO createMonthlyStat(int year, int month) {
         int activeCount = memberRepository.countActiveMembers();
         int joinedCount = memberRepository.countJoinedMembersByYearAndMonth(year, month);
 
-        MemberStat stat = MemberStat.builder()
-                .memberSum(activeCount)
-                .joinedMember(joinedCount)
-                .year(year)
-                .month(month)
-                .createdDate(LocalDateTime.now())
-                .build();
-
-        memberStatRepository.save(stat);
+        
+        // 기존 데이터 존재 여부 확인
+        Optional<MemberStat> existingStat = memberStatRepository.findByYearAndMonth(year, month);
+        
+        if (existingStat.isPresent()) {
+        	MemberStat memberStat = existingStat.get();
+        	// 변경
+        	memberStat.updateJoinedMember(joinedCount);
+        	memberStat.updateMemberSum(activeCount);
+        	// 저장
+        	memberStatRepository.save(memberStat);
+        } else {
+        	// 데이터 생성
+            MemberStat memberStat = MemberStat.builder()
+                    .memberSum(activeCount)
+                    .joinedMember(joinedCount)
+                    .year(year)
+                    .month(month)
+                    .createdDate(LocalDateTime.now())
+                    .build();
+            // 저장
+        	memberStatRepository.save(memberStat);
+        }
+        return getMemberStat(year, month);
     }
     
     

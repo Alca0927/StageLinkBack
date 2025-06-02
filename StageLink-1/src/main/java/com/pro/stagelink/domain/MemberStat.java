@@ -35,4 +35,13 @@ public class MemberStat {
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;
+    
+    // 회원 업데이트
+    public void updateJoinedMember(int joinedCount) {
+    	this.joinedMember = joinedCount;
+    }
+    
+    public void updateMemberSum(int activeCount) {
+    	this.memberSum = activeCount;
+    }
 }
