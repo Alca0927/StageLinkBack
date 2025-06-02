@@ -20,4 +20,11 @@ public class PageRequestDTO {
 
     // ✅ 이름 검색용 필드 추가
     private String name;
+    
+    // ✅ type: 검색 타입 (예: t = title, l = location 등)
+    private String type;
+
+    // ✅ keyword: 검색어
+    private String keyword;
+    
 }

@@ -35,13 +35,13 @@ import lombok.extern.log4j.Log4j2;
 @Log4j2
 @RequiredArgsConstructor
 public class ShowServiceImpl implements ShowService {
+
     private final ModelMapper modelMapper;
     private final ShowRepository showRepository;
     private final ShowInfoRepository showInfoRepository;
     private final ShowLocationRepository showLocationRepository;
     private final ShowSeatRepository showSeatRepository;
 
-    // 등록
     @Override
     public Integer register(ShowDTO showDTO) {
         Show show = modelMapper.map(showDTO, Show.class);
@@ -67,7 +67,6 @@ public class ShowServiceImpl implements ShowService {
         return savedShowLocation.getShowlocation();
     }
 
-    // 좌석 등록
     private void createSeats(Show show, String seatClass, int count) {
         List<ShowSeat> seats = new ArrayList<>();
         for (int i = 1; i <= count; i++) {
@@ -81,7 +80,6 @@ public class ShowServiceImpl implements ShowService {
         showSeatRepository.saveAll(seats);
     }
 
-    // 조회
     @Override
     public ShowDTO getShow(int showNo) {
         Optional<Show> result = showRepository.findById(showNo);
@@ -110,7 +108,6 @@ public class ShowServiceImpl implements ShowService {
         return modelMapper.map(showLocation, ShowLocationDTO.class);
     }
 
-    // 수정
     @Override
     public void modify(ShowDTO showDTO) {
         Optional<Show> result = showRepository.findById(showDTO.getShowNo());
@@ -154,15 +151,11 @@ public class ShowServiceImpl implements ShowService {
     public void modify(ShowLocationDTO showLocationDTO) {
         Optional<ShowLocation> result = showLocationRepository.findById(showLocationDTO.getShowlocation());
         ShowLocation showLocation = result.orElseThrow();
-
-        // ✅ 수정된 부분
         showLocation.changeLocationName(showLocationDTO.getLocationName());
         showLocation.changeLocationAddress(showLocationDTO.getLocationAddress());
-
         showLocationRepository.save(showLocation);
     }
 
-    //삭제
     @Override
     public void removeShow(Integer tno) {}
 
@@ -172,28 +165,96 @@ public class ShowServiceImpl implements ShowService {
     @Override
     public void removeShowLocation(Integer tno) {}
 
-    // 목록
     @Override
     public PageResponseDTO<ShowDTO> showList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by("showNo").descending());
-        Page<Show> result = showRepository.findAll(pageable);
-        List<ShowDTO> dtoList = result.getContent().stream().map(show -> modelMapper.map(show, ShowDTO.class)).collect(Collectors.toList());
-        return PageResponseDTO.<ShowDTO>withAll().dtoList(dtoList).pageRequestDTO(pageRequestDTO).totalCount(result.getTotalElements()).build();
+
+        Page<Show> result;
+        String type = pageRequestDTO.getType();
+        String keyword = pageRequestDTO.getKeyword();
+
+        if (type != null && keyword != null && !keyword.isBlank()) {
+            if (type.equals("t")) {
+                result = showRepository.findByShowInfo_ShowNameContaining(keyword, pageable);
+            } else {
+                result = showRepository.findAll(pageable);
+            }
+        } else {
+            result = showRepository.findAll(pageable);
+        }
+
+        List<ShowDTO> dtoList = result.getContent().stream()
+            .map(show -> modelMapper.map(show, ShowDTO.class))
+            .collect(Collectors.toList());
+
+        return PageResponseDTO.<ShowDTO>withAll()
+            .dtoList(dtoList)
+            .pageRequestDTO(pageRequestDTO)
+            .totalCount(result.getTotalElements())
+            .build();
     }
 
     @Override
     public PageResponseDTO<ShowInfoDTO> showInfoList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by("showInfo").descending());
-        Page<ShowInfo> result = showInfoRepository.findAll(pageable);
-        List<ShowInfoDTO> dtoList = result.getContent().stream().map(showInfo -> modelMapper.map(showInfo, ShowInfoDTO.class)).collect(Collectors.toList());
-        return PageResponseDTO.<ShowInfoDTO>withAll().dtoList(dtoList).pageRequestDTO(pageRequestDTO).totalCount(result.getTotalElements()).build();
+
+        Page<ShowInfo> result;
+        String type = pageRequestDTO.getType();
+        String keyword = pageRequestDTO.getKeyword();
+
+        if (type != null && keyword != null && !keyword.isBlank()) {
+            if (type.equals("t")) {
+                result = showInfoRepository.findByShowNameContaining(keyword, pageable);
+            } else {
+                result = showInfoRepository.findAll(pageable);
+            }
+        } else {
+            result = showInfoRepository.findAll(pageable);
+        }
+
+        List<ShowInfoDTO> dtoList = result.getContent().stream()
+            .map(showInfo -> modelMapper.map(showInfo, ShowInfoDTO.class))
+            .collect(Collectors.toList());
+
+        return PageResponseDTO.<ShowInfoDTO>withAll()
+            .dtoList(dtoList)
+            .pageRequestDTO(pageRequestDTO)
+            .totalCount(result.getTotalElements())
+            .build();
     }
 
     @Override
     public PageResponseDTO<ShowLocationDTO> showLocationList(PageRequestDTO pageRequestDTO) {
         Pageable pageable = PageRequest.of(pageRequestDTO.getPage() - 1, pageRequestDTO.getSize(), Sort.by("showlocation").descending());
-        Page<ShowLocation> result = showLocationRepository.findAll(pageable);
-        List<ShowLocationDTO> dtoList = result.getContent().stream().map(showLocation -> modelMapper.map(showLocation, ShowLocationDTO.class)).collect(Collectors.toList());
-        return PageResponseDTO.<ShowLocationDTO>withAll().dtoList(dtoList).pageRequestDTO(pageRequestDTO).totalCount(result.getTotalElements()).build();
+
+        Page<ShowLocation> result;
+        String type = pageRequestDTO.getType();
+        String keyword = pageRequestDTO.getKeyword();
+
+        if (type != null && keyword != null && !keyword.isBlank()) {
+            if (type.equals("l")) {
+                result = showLocationRepository.findByLocationNameContaining(keyword, pageable);
+            } else {
+                result = showLocationRepository.findAll(pageable);
+            }
+        } else {
+            result = showLocationRepository.findAll(pageable);
+        }
+
+        List<ShowLocationDTO> dtoList = result.getContent().stream()
+            .map(showLocation -> modelMapper.map(showLocation, ShowLocationDTO.class))
+            .collect(Collectors.toList());
+
+        return PageResponseDTO.<ShowLocationDTO>withAll()
+            .dtoList(dtoList)
+            .pageRequestDTO(pageRequestDTO)
+            .totalCount(result.getTotalElements())
+            .build();
     }
+    
+    @Override
+    public int getTotalCount() {
+        return (int) showRepository.count();  // 전체 Show 엔티티 수
+    }
+
 }
