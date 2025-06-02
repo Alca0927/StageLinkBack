@@ -95,13 +95,11 @@ public class RegisterServiceImpl implements RegisterService {
 
 	@Override
 	public int getReservationTotalCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return reservertionRepository.countReservation();
 	}
 
 	@Override
 	public int getRefundTotalCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return reservertionRepository.countRefund();
 	}
 }

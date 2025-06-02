@@ -1,5 +1,9 @@
 package com.pro.stagelink.controller;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,4 +50,17 @@ public class RegisterController {
 	public RefundDTO getRefund(@PathVariable(name="refundNo") int refundNo) {
 		return registerService.getRefund(refundNo);
 	}
+	
+	// 예매 수 + 환불 수 반환
+    @GetMapping("/registermanager")
+    public ResponseEntity<Map<String, Integer>> getBookingSummary() {
+        int registerCount = (int) registerService.getReservationTotalCount();
+        int refundCount = (int) registerService.getRefundTotalCount();
+
+        Map<String, Integer> summary = new HashMap<>();
+        summary.put("bookingCount", registerCount);
+        summary.put("refundCount", refundCount);
+
+        return ResponseEntity.ok(summary);
+    }
 }

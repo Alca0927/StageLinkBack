@@ -4,6 +4,7 @@ import com.pro.stagelink.dto.NoticeDTO;
 import com.pro.stagelink.dto.PageRequestDTO;
 import com.pro.stagelink.dto.PageResponseDTO;
 import com.pro.stagelink.service.NoticeService;
+import com.pro.stagelink.service.QnAnswerService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,18 +12,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/notices")
+@RequestMapping("/admin")
 @RequiredArgsConstructor
 @Slf4j
 public class NoticeController {
 
     private final NoticeService noticeService;
+    private final QnAnswerService qnaService;
 
     // 🔹 공지사항 목록
-    @GetMapping("/list")
+    @GetMapping("/notices/list")
     public PageResponseDTO<NoticeDTO> getNotices(
             @RequestParam(value = "page", defaultValue = "1") int page,
             @RequestParam(value = "size", defaultValue = "10") int size) {
@@ -35,7 +38,7 @@ public class NoticeController {
     }
 
     // 🔹 공지사항 개수
-    @GetMapping("/count")
+    @GetMapping("/notices/count")
     public Map<String, Long> getCount() {
         return Map.of("count", noticeService.getCount());
     }
@@ -54,19 +57,32 @@ public class NoticeController {
     }
 
     // 🔹 공지사항 상세 조회
-    @GetMapping("/{noticeNo}")
+    @GetMapping("/notices/{noticeNo}")
     public ResponseEntity<NoticeDTO> getNotice(@PathVariable("noticeNo") Integer noticeNo) {
         NoticeDTO dto = noticeService.getNotice(noticeNo);
         return ResponseEntity.ok(dto);
     }
     
     // 공지사항 수정
-    @PutMapping("/{noticeNo}")
+    @PutMapping("/notices/{noticeNo}")
     public Map<String, String> modify(@PathVariable(name = "noticeNo") int noticeNo, @RequestBody NoticeDTO dto){
     	dto.setNoticeNo(noticeNo);
     	log.info("Modify : " + dto);
     	noticeService.modify(dto);
     	
     	return Map.of("RESULT","SUCCESS");
+    }
+    
+ // 요약 데이터 반환 (공지 수 + Q&A 수)
+    @GetMapping("/noticemanager")
+    public ResponseEntity<Map<String, Integer>> getNoticeSummary() {
+        int noticeCount = (int) noticeService.getCount();
+        int qnaCount = (int) qnaService.getCount();
+
+        Map<String, Integer> summary = new HashMap<>();
+        summary.put("noticeCount", noticeCount);
+        summary.put("qnaCount", qnaCount);
+
+        return ResponseEntity.ok(summary);
     }
 }
