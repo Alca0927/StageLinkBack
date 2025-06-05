@@ -29,7 +29,7 @@ import lombok.Setter;
 @Builder
 public class ActorShow {
 	@EmbeddedId
-	private ActorShowId id; // 복합키 클래스 (배우 번호 + 공연 번호)
+	private ActorShowId id = new ActorShowId(); // 복합키 클래스 (배우 번호 + 공연 번호)
 
 
 	@MapsId("actorNo") // 복합키의 actorNo 필드와 매핑
@@ -70,4 +70,17 @@ public class ActorShow {
 	 public void changeShowEndTime(LocalDate showEndTime) {
 		 this.showEndTime = showEndTime;
 	 } 
+	 
+	// 복합키를 적절히 초기화하는 생성자
+	    public ActorShow(Actor actor, ShowInfo showInfo) {
+	        this.id = new ActorShowId();
+	        this.actor = actor;
+	        this.showInfo = showInfo;
+	        if (actor != null) {
+	            this.id.setActorNo(actor.getActorNo()); // Actor에 getActorNo() 메소드가 있다고 가정
+	        }
+	        if (showInfo != null) {
+	            this.id.setShowInfo(showInfo.getShowInfo()); // ShowInfo에 getShowNo() 메소드가 있다고 가정
+	        }
+	    }
 }

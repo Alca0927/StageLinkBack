@@ -27,4 +27,6 @@ public class PageRequestDTO {
     // ✅ keyword: 검색어
     private String keyword;
     
+ // Q&A 검색용 필드 (새로 추가)
+    private String question;
 }
