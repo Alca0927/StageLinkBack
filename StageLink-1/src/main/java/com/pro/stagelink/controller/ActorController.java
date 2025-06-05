@@ -69,7 +69,7 @@ public class ActorController {
     // 배우 출연작 등록
     @PostMapping("/showmanager/actorshow/add")
     public Map<String, Integer> registerActorShow(@RequestBody ActorShowDTO actorShowDTO) {
-        log.info("actorShowDTO : " + actorShowDTO);
+        log.info("배우 출연작 DTO : " + actorShowDTO);
         int actorNo = actorService.register(actorShowDTO);
         return Map.of("actorNo", actorNo);
     }

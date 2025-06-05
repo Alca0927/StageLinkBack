@@ -1,5 +1,6 @@
 package com.pro.stagelink.service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import com.pro.stagelink.domain.Actor;
 import com.pro.stagelink.domain.ActorShow;
+import com.pro.stagelink.domain.ActorShowId;
 import com.pro.stagelink.domain.ShowInfo;
 import com.pro.stagelink.dto.ActorDTO;
 import com.pro.stagelink.dto.ActorShowDTO;
@@ -48,9 +50,49 @@ public class ActorServiceImpl implements ActorService {
     // 배우-공연 등록
     @Override
     public int register(ActorShowDTO actorShowDTO) {
-        ActorShow actorShow = modelMapper.map(actorShowDTO, ActorShow.class);
-        ActorShow savedActorShow = actorShowRepository.save(actorShow);
-        return savedActorShow.getActor().getActorNo();
+        //ActorShow actorShow = modelMapper.map(actorShowDTO, ActorShow.class);
+        //ActorShow savedActorShow = actorShowRepository.save(actorShow);
+        //return savedActorShow.getActor().getActorNo();
+    	 try {
+    	        log.info("ActorShow 등록 시작: {}", actorShowDTO);
+
+    	        // 1. Actor 조회
+    	        Actor actor = actorRepository.findById(actorShowDTO.getActorDTO().getActorNo())
+    	            .orElseThrow(() -> new RuntimeException("배우를 찾을 수 없습니다: " + actorShowDTO.getActorDTO().getActorNo()));
+
+    	        // 2. ShowInfo 조회
+    	        ShowInfo showInfo = showInfoRepository.findById(actorShowDTO.getShowInfoDTO().getShowInfo())
+    	            .orElseThrow(() -> new RuntimeException("공연 정보를 찾을 수 없습니다: " + actorShowDTO.getShowInfoDTO().getShowInfo()));
+
+    	        // 3. ActorShow 엔티티 생성
+    	        ActorShow actorShow = ActorShow.builder()
+    	            .actor(actor)
+    	            .showInfo(showInfo)
+    	            .roleName(actorShowDTO.getRoleName())
+    	            .showStartTime(actorShowDTO.getShowStartTime())
+    	            .showEndTime(actorShowDTO.getShowEndTime())
+    	            .build();
+
+    	        // 4. 복합키 수동 설정 (중요!)
+    	        ActorShowId id = ActorShowId.builder()
+    	            .actorNo(actor.getActorNo())
+    	            .showInfo(showInfo.getShowInfo()) // 또는 showInfo.getShowInfo() - ShowInfo 엔티티의 실제 메소드명 확인
+    	            .build();
+    	        actorShow.setId(id);
+
+    	        log.info("저장할 ActorShow: {}", actorShow);
+    	        log.info("복합키 ID: {}", actorShow.getId());
+
+    	        // 5. 저장
+    	        ActorShow savedActorShow = actorShowRepository.save(actorShow);
+    	        log.info("ActorShow 등록 완료: {}", savedActorShow);
+
+    	        return savedActorShow.getActor().getActorNo();
+
+    	    } catch (Exception e) {
+    	        log.error("ActorShow 등록 실패", e);
+    	        throw new RuntimeException("배우 출연작 등록에 실패했습니다: " + e.getMessage(), e);
+    	    }
     }
 
     // 배우 조회

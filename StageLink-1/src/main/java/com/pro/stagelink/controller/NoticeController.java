@@ -44,7 +44,7 @@ public class NoticeController {
     }
 
     // ✅ 공지사항 등록 (수정됨)
-    @PostMapping
+    @PostMapping("/notices")
     public ResponseEntity<String> create(@RequestBody NoticeDTO dto) {
         try {
             log.info("📥 공지사항 등록 요청: {}", dto);

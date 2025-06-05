@@ -14,4 +14,10 @@ public interface ShowInfoRepository extends JpaRepository<ShowInfo, Integer> {
 
     // ✅ 공연명으로 검색
     Page<ShowInfo> findByShowNameContaining(String keyword, Pageable pageable);
+    
+    // 공연명과 포스터로 중복 체크
+    boolean existsByShowNameAndShowPoster(String showName, String showPoster);
+    
+    // 공연명으로만 중복 체크 (필요시 사용)
+    boolean existsByShowName(String showName);
 }
