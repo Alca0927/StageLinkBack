@@ -31,6 +31,10 @@ SpringBoot, 리액트를 활용한 공연 예매 및 커뮤니티 사이트의 �
 <img width="1806" height="936" alt="스크린샷 2025-07-26 022934" src="https://github.com/user-attachments/assets/3ceb2b6c-dd48-4d56-99ba-cb63762c87ca" />
 <img width="1468" height="755" alt="스크린샷 2025-07-26 022854" src="https://github.com/user-attachments/assets/ed282a70-40cc-45be-9328-6a65a75a888a" />
 
+#  WBS
+<img width="1016" height="900" alt="스크린샷 2025-07-26 023247" src="https://github.com/user-attachments/assets/165d1782-762b-4d26-8369-7ed183af04fe" />
+
+
 # 프로젝트 경험
 ## 가장 힘들었던 점
 - 기획 단계에게 까먹은 점에 대한 후속 조치가 힘들었다. KOPIS 사용시, 데이터의 종류와 형식를 보았으나, 출력 방식을 고려하지 못하였다. (KOPIS 데이터 출력 : 공연 정보 검색시, 공연장 출력/ 프로젝트 데이터 저장 방식 : 공연장 검색시, 공연 정보 출력)
